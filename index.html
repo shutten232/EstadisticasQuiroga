@@ -264,6 +264,30 @@ table.table th{
   .logo-letter{ font-size:96px; transform:translate(-3px,-4px); }
   .intro-title{ font-size:1.1rem; }
 }
+
+/* ==== MAPA TALLERES CRPC (Pestaña nueva) ==== */
+.map-wrapper-crpc{
+  position:relative;
+  width:100%;
+  border-radius:16px;
+  overflow:hidden;
+  border:1px solid var(--line-soft);
+  min-height:70vh; /* grande en monitores */
+  background:#000;
+}
+.map-wrapper-crpc iframe{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  border:0;
+}
+
+@media (max-width:768px){
+  .map-wrapper-crpc{
+    min-height:60vh;
+  }
+}
 </style>
 
 </head>
@@ -283,12 +307,13 @@ table.table th{
 <div class="container py-4">
   <h1 class="text-center fw-bold mb-4 text-primary">QUIROGA CRPC / Obleas</h1>
 
-  <!-- ORDEN NUEVO: General / Impacto / Detalle / Comparación -->
+  <!-- ORDEN NUEVO: General / Impacto / Detalle / Comparación / Mapa -->
   <ul class="nav nav-tabs">
     <li class="nav-item"><button class="nav-link active" data-bs-toggle="tab" data-bs-target="#general">General</button></li>
     <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#impacto">Impacto</button></li>
     <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#detalle">Detalle mensual</button></li>
     <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#comparacion">Comparación 2024 vs 2025</button></li>
+    <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#mapa">Mapa talleres CRPC</button></li>
   </ul>
 
   <div class="tab-content mt-4">
@@ -494,6 +519,25 @@ table.table th{
             <h4 class="fw-bold comparison-value">1553 → 1345</h4>
             <span class="delta-down">-13%</span>
           </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MAPA TALLERES CRPC -->
+    <div class="tab-pane fade" id="mapa">
+      <div class="card-box">
+        <h3 class="text-center text-primary mb-2">Mapa de talleres que envian cilindros al CRPC</h3>
+        <p class="text-center text-muted small mb-3">
+          Rojo: talleres que trabajan con CRPC · Azul: talleres que no trabajan con nosotros
+        </p>
+        <div class="map-wrapper-crpc">
+          <!-- Si no carga, copiar "Insertar en mi sitio" desde My Maps y reemplazar el src -->
+          <iframe
+            src="https://www.google.com/maps/d/u/0/embed?mid=1UJDYhfdJhdRsFy3Twa0Nf0D9G8qMx7Y&ehbc=2E312F"
+            loading="lazy"
+            referrerpolicy="no-referrer-when-downgrade"
+            allowfullscreen>
+          </iframe>
         </div>
       </div>
     </div>
