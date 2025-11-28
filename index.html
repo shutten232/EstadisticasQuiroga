@@ -13,7 +13,7 @@
       --card-bg:#ffffff;
       --border:#d1d5db;
       --text-main:#111827;
-      --text-muted:#6b7280;
+      --text-muted:#111827;      /* 👉 antes gris, ahora oscuro */
       --brand-red:#b71c1c;
       --ok:#16a34a;
     }
@@ -110,8 +110,16 @@
       text-transform:uppercase; letter-spacing:.06em;
       margin-bottom:6px; color:#111827;
     }
-    .hero-subtitle{ font-size:16px; color:#374151; margin-bottom:10px; }
-    .hero-bullets{ font-size:14px; color:#111827; padding-left:18px; }
+    .hero-subtitle{
+      font-size:16px;
+      color:var(--text-main);  /* 👉 antes gris */
+      margin-bottom:10px;
+    }
+    .hero-bullets{
+      font-size:14px;
+      color:var(--text-main);  /* 👉 más oscuro */
+      padding-left:18px;
+    }
     .hero-bullets li{ margin-bottom:4px; }
     .hero-watermark{
       position:absolute; right:-40px; bottom:-80px;
@@ -129,8 +137,14 @@
     /* SECCIONES */
     section{ margin-bottom:30px; }
     .section-header{ margin-bottom:14px; }
-    .section-title{ font-size:22px; font-weight:800; margin-bottom:2px; color:#111827; }
-    .section-subtitle{ font-size:14px; color:var(--text-muted); }
+    .section-title{
+      font-size:22px; font-weight:800;
+      margin-bottom:2px; color:#111827;
+    }
+    .section-subtitle{
+      font-size:14px;
+      color:var(--text-main);   /* 👉 más contraste */
+    }
 
     .grid-3{
       display:grid;
@@ -162,8 +176,15 @@
     }
     .card-value{ font-size:34px; font-weight:800; margin-bottom:4px; }
     .card-value.ok{ color:var(--ok); }
-    .card-label{ font-size:14px; color:var(--text-muted); margin-bottom:6px; }
-    .card-note{ font-size:14px; color:var(--text-muted); }
+    .card-label{
+      font-size:14px;
+      color:var(--text-main);  /* 👉 antes muted */
+      margin-bottom:6px;
+    }
+    .card-note{
+      font-size:14px;
+      color:var(--text-main);  /* 👉 más oscuro */
+    }
 
     .chart-card{
       background:var(--card-bg);
@@ -173,11 +194,19 @@
       box-shadow:0 6px 18px rgba(15,23,42,0.10);
     }
     .chart-title{ font-size:15px; font-weight:600; color:var(--brand-red); margin-bottom:2px; }
-    .chart-subtitle{ font-size:13px; color:var(--text-muted); margin-bottom:8px; }
+    .chart-subtitle{
+      font-size:13px;
+      color:var(--text-main);   /* 👉 más legible */
+      margin-bottom:8px;
+    }
     .chart-container{ width:100%; height:300px; }
     canvas{ width:100% !important; height:100% !important; }
 
-    .key-list{ font-size:14px; color:var(--text-muted); padding-left:18px; }
+    .key-list{
+      font-size:14px;
+      color:var(--text-main);   /* 👉 oscuro */
+      padding-left:18px;
+    }
     .key-list li{ margin-bottom:4px; }
 
     .mini-tag{
@@ -186,7 +215,7 @@
       border-radius:999px;
       font-size:11px;
       border:1px solid var(--border);
-      color:var(--text-muted);
+      color:var(--text-main);   /* 👉 también más fuerte */
       margin-bottom:4px;
     }
 
@@ -198,7 +227,7 @@
       font-size:12px;
       letter-spacing:.12em;
       text-transform:uppercase;
-      color:var(--text-muted);
+      color:var(--text-main);   /* 👉 oscuro */
       margin-bottom:6px;
       background:#ffffff;
     }
@@ -215,7 +244,7 @@
     }
     .date-label{
       font-size:14px;
-      color:#374151;
+      color:var(--text-main);   /* 👉 antes gris */
       margin-bottom:12px;
       font-weight:600;
     }
@@ -231,14 +260,22 @@
       font-size:13px;
       text-transform:uppercase;
       letter-spacing:.10em;
-      color:#4b5563;
+      color:var(--text-main);   /* 👉 más oscuro */
       margin-bottom:6px;
       font-weight:700;
     }
     .kpi-value{ font-size:30px; font-weight:800; color:#111827; }
     .kpi-value.ok{ color:#15803d; }
-    .kpi-extra{ font-size:13px; color:#6b7280; margin-top:4px; }
-    .note{ font-size:13px; color:var(--text-muted); margin-top:6px; }
+    .kpi-extra{
+      font-size:13px;
+      color:var(--text-main);   /* 👉 más contraste */
+      margin-top:4px;
+    }
+    .note{
+      font-size:13px;
+      color:var(--text-main);   /* 👉 antes muted */
+      margin-top:6px;
+    }
 
     form{ display:flex; flex-direction:column; gap:10px; }
     label{ font-size:14px; color:var(--text-main); font-weight:500; }
@@ -273,7 +310,11 @@
       background:#d1d5db;
       border-color:#6b7280;
     }
-    .small-muted{ font-size:12px; color:var(--text-muted); margin-top:6px; }
+    .small-muted{
+      font-size:12px;
+      color:var(--text-main);   /* 👉 más oscuro */
+      margin-top:6px;
+    }
 
     .hist-header{
       display:flex; justify-content:space-between;
@@ -284,7 +325,10 @@
       text-transform:uppercase; letter-spacing:.08em;
       color:var(--brand-red);
     }
-    .hist-desc{ font-size:12px; color:var(--text-muted); }
+    .hist-desc{
+      font-size:12px;
+      color:var(--text-main);    /* 👉 oscuro */
+    }
 
     .hist-actions{
       display:flex;
@@ -326,7 +370,7 @@
     .empty-row td{
       text-align:center;
       font-size:12px;
-      color:var(--text-muted);
+      color:var(--text-main);   /* 👉 para que se lea */
     }
     .chk-center{
       text-align:center;
@@ -664,7 +708,6 @@
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
 
   <script>
-    // CONFIG FIREBASE – TU PROYECTO
     const firebaseConfig = {
       apiKey: "AIzaSyAq1_VIg5BtPH9QPS5NwuJDrVCqyfQ3qwU",
       authDomain: "estadisticas-diarias.firebaseapp.com",
