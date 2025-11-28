@@ -164,7 +164,6 @@
     .card-value.ok{ color:var(--ok); }
     .card-label{ font-size:14px; color:var(--text-muted); margin-bottom:6px; }
     .card-note{ font-size:14px; color:var(--text-muted); }
-    .arrow{ font-size:28px; margin-right:6px; vertical-align:middle; }
 
     .chart-card{
       background:var(--card-bg);
@@ -287,23 +286,78 @@
     }
     .hist-desc{ font-size:12px; color:var(--text-muted); }
 
-    table{ width:100%; border-collapse:collapse; font-size:13px; }
+    .hist-actions{
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+    }
+
+    /* TABLA HISTORIAL */
+    .hist-table-wrapper{
+      max-height:260px;
+      overflow-y:auto;
+      border-radius:12px;
+      border:1px solid #e5e7eb;
+    }
+    table{
+      width:100%;
+      border-collapse:collapse;
+      font-size:13px;
+    }
     th, td{
       border-bottom:1px solid #e5e7eb;
       padding:6px 6px;
-      text-align:left;
     }
-    th{ background:#f3f4f6; font-weight:600; }
-    td.num{ text-align:right; font-variant-numeric:tabular-nums; }
-    tr:nth-child(even) td{ background:#fafafa; }
-    .empty-row td{ text-align:center; font-size:12px; color:var(--text-muted); }
-    .chk-center{ text-align:center; }
+    th{
+      background:#f3f4f6;
+      font-weight:600;
+      text-align:center;
+    }
+    td.num{
+      text-align:right;
+      font-variant-numeric:tabular-nums;
+    }
+    td.impact-cell{
+      text-align:center;
+    }
+    tr:nth-child(even) td{
+      background:#fafafa;
+    }
+    .empty-row td{
+      text-align:center;
+      font-size:12px;
+      color:var(--text-muted);
+    }
+    .chk-center{
+      text-align:center;
+    }
+
+    /* PRINT SOLO HISTORIAL */
+    .no-print{ }
+
+    @media print {
+      body *{
+        visibility:hidden;
+      }
+      #historial-print, #historial-print *{
+        visibility:visible;
+      }
+      #historial-print{
+        position:absolute;
+        left:0;
+        top:0;
+        width:100%;
+      }
+      .no-print{
+        display:none !important;
+      }
+    }
   </style>
 </head>
 <body>
 
   <!-- NAV -->
-  <div class="top-nav">
+  <div class="top-nav no-print">
     <div class="top-nav-inner">
       <div class="brand">
         <div class="brand-logo">Q</div>
@@ -326,7 +380,7 @@
   <main class="page">
 
     <!-- PRESENTACIÓN EJECUTIVA -->
-    <section class="hero" id="presentacion">
+    <section class="hero no-print" id="presentacion">
       <div class="hero-content">
         <div class="hero-badge">Presentación ejecutiva</div>
         <h1 class="hero-title">CRPC & Obleas · Córdoba 2025</h1>
@@ -347,7 +401,7 @@
 
     <!-- PANEL DIARIO ONLINE -->
     <section id="hoy">
-      <header class="section-header">
+      <header class="section-header no-print">
         <div class="badge">Impacto diario online</div>
         <h2 class="section-title">Quiroga CRPC vs Córdoba – Hoy</h2>
         <p class="section-subtitle">
@@ -356,7 +410,7 @@
         </p>
       </header>
 
-      <div class="daily-layout">
+      <div class="daily-layout no-print">
         <!-- Resumen -->
         <section class="card card-resumen-hoy">
           <div class="card-title">Resumen de hoy</div>
@@ -417,8 +471,8 @@
         </section>
       </div>
 
-      <!-- Historial -->
-      <section class="card">
+      <!-- Historial (único que se imprime) -->
+      <section class="card" id="historial-print">
         <div class="hist-header">
           <div>
             <div class="hist-header-title">Historial de días guardados (online)</div>
@@ -426,35 +480,40 @@
               Datos guardados en Firestore. Se muestra un registro por guardado.
             </div>
           </div>
-          <div>
+          <div class="hist-actions no-print">
+            <button type="button" class="btn btn-secondary" id="btnImprimirHistorial">
+              Imprimir
+            </button>
             <button type="button" class="btn btn-secondary" id="btnBorrarSeleccionados">
               Borrar seleccionados
             </button>
           </div>
         </div>
 
-        <table>
-          <thead>
-            <tr>
-              <th>Fecha</th>
-              <th class="num">Córdoba</th>
-              <th class="num">Quiroga</th>
-              <th class="num">Impacto %</th>
-              <th class="chk-center">Sel.</th>
-            </tr>
-          </thead>
-          <tbody id="tbodyHistorial">
-          </tbody>
-        </table>
+        <div class="hist-table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>Fecha</th>
+                <th>Córdoba</th>
+                <th>Quiroga</th>
+                <th>Impacto %</th>
+                <th>Sel.</th>
+              </tr>
+            </thead>
+            <tbody id="tbodyHistorial">
+            </tbody>
+          </table>
+        </div>
       </section>
     </section>
 
     <!-- RESUMEN ANUAL -->
-    <section id="resumen">
+    <section id="resumen" class="no-print">
       <header class="section-header">
         <h2 class="section-title">1. Resumen anual</h2>
         <p class="section-subtitle">
-          Totales del año y lectura rápida para que quede claro en 10 segundos.
+          Totales del año y lectura rápida por tipo de dato.
         </p>
       </header>
 
@@ -463,26 +522,16 @@
           <div class="card-title">CRPC – cilindros 2025</div>
           <div class="card-value">8.300</div>
           <div class="card-label">Cilindros procesados en 10 meses.</div>
-          <div class="card-note">
-            Volumen suficiente para mostrar que el CRPC de Quiroga es
-            un jugador fuerte dentro de la provincia.
-          </div>
         </article>
         <article class="card">
           <div class="card-title">Obleas Quirgroup</div>
           <div class="card-value">3.920</div>
           <div class="card-label">Obleas emitidas por Quirgroup en el año.</div>
-          <div class="card-note">
-            Flujo constante de obleas, acompañando el movimiento de cilindros.
-          </div>
         </article>
         <article class="card">
           <div class="card-title">Obleas Quiroga</div>
           <div class="card-value">18.672</div>
           <div class="card-label">Obleas emitidas por Quiroga en el año.</div>
-          <div class="card-note">
-            La base fuerte de obleas está concentrada en Quiroga taller.
-          </div>
         </article>
       </div>
 
@@ -492,32 +541,29 @@
           <div class="card-value ok">
             <span class="arrow">▲</span>+18%
           </div>
-          <div class="card-label">Cilindros totales procesados.</div>
-          <div class="card-note">
-            2025 supera a 2024. Mensaje: <strong>este año se trabajó más.</strong>
-          </div>
+          <div class="card-label">Variación de cilindros totales procesados.</div>
         </article>
         <article class="card">
           <div class="card-title">Impacto CRPC en Córdoba</div>
           <div class="card-value">16%</div>
           <div class="card-label">Participación promedio del año.</div>
           <div class="card-note">
-            De cada 100 cilindros de Córdoba, <strong>16 pasan por el CRPC.</strong>
+            De cada 100 cilindros de Córdoba, unos 16 pasan por el CRPC.
           </div>
         </article>
         <article class="card">
           <div class="card-title">Impacto obleas del taller</div>
           <div class="card-value">11%</div>
-          <div class="card-label">Quiroga + Quirgroup.</div>
+          <div class="card-label">Quiroga + Quirgroup sobre obleas de Córdoba.</div>
           <div class="card-note">
-            De cada 100 obleas de la provincia, unas <strong>11 salen del taller.</strong>
+            De cada 100 obleas de la provincia, unas 11 salen del taller.
           </div>
         </article>
       </div>
     </section>
 
     <!-- CANTIDADES MENSUALES -->
-    <section id="cantidades">
+    <section id="cantidades" class="no-print">
       <header class="section-header">
         <h2 class="section-title">2. Cantidades mensuales</h2>
         <p class="section-subtitle">
@@ -548,13 +594,13 @@
         <ul class="key-list">
           <li><strong>Picos de CRPC:</strong> Julio (1.027) y Octubre (1.099).</li>
           <li><strong>Mes más bajo CRPC:</strong> Marzo (557 cilindros).</li>
-          <li>Las obleas acompañan bien los picos, sin meses muertos.</li>
+          <li>Las obleas mantienen volúmenes acordes a los meses de mayor actividad.</li>
         </ul>
       </article>
     </section>
 
     <!-- IMPACTO MENSUAL -->
-    <section id="impacto">
+    <section id="impacto" class="no-print">
       <header class="section-header">
         <h2 class="section-title">3. Impacto mensual en Córdoba</h2>
         <p class="section-subtitle">
@@ -588,42 +634,27 @@
         <div class="card-title">Lectura rápida</div>
         <ul class="key-list">
           <li>CRPC casi siempre entre <strong>15–16 %</strong>, máximo 18 % en octubre.</li>
-          <li>Obleas entre <strong>10–12 %</strong>, sin caídas fuertes.</li>
-          <li>Mensaje: <strong>somos parte estable del mercado de Córdoba.</strong></li>
+          <li>Obleas entre <strong>10–12 %</strong> según el mes.</li>
         </ul>
       </article>
     </section>
 
-    <!-- TALLERES -->
-    <section id="talleres">
+    <!-- TALLERES - EN DESARROLLO -->
+    <section id="talleres" class="no-print">
       <header class="section-header">
         <h2 class="section-title">4. Talleres que más aportan</h2>
         <p class="section-subtitle">
-          Ranking simple por cilindros enviados al CRPC (ejemplo con 10 principales).
+          Módulo en desarrollo: acá va a ir el ranking detallado de talleres.
         </p>
       </header>
 
-      <div class="grid-2">
-        <article class="chart-card">
-          <div class="chart-title">Top talleres por cilindros CRPC</div>
-          <div class="chart-subtitle">
-            Barras horizontales, nombre grande y número a la derecha.
-          </div>
-          <div class="chart-container">
-            <canvas id="chartTalleres"></canvas>
-          </div>
-        </article>
-
-        <article class="card">
-          <div class="mini-tag">Conclusiones</div>
-          <div class="card-title" style="margin-top:4px;">Concentración de volumen</div>
-          <ul class="key-list">
-            <li>Los 3 primeros talleres concentran buena parte del volumen.</li>
-            <li>Sirve para ver dónde cuidar la relación comercial.</li>
-            <li>En versión final se pueden listar todos, no solo el Top 10.</li>
-          </ul>
-        </article>
-      </div>
+      <article class="card">
+        <div class="card-title">Módulo en desarrollo</div>
+        <p class="card-note">
+          Próxima etapa: ranking completo de talleres, volúmenes de cilindros enviados al CRPC
+          y filtros para comparar rendimiento por zona y período.
+        </p>
+      </article>
     </section>
 
   </main>
@@ -775,7 +806,7 @@
         tr.appendChild(tdQuiroga);
 
         const tdImpacto = document.createElement("td");
-        tdImpacto.classList.add("num");
+        tdImpacto.classList.add("impact-cell");
         const imp = calcularImpacto(reg.cordoba, reg.quiroga);
         tdImpacto.textContent = (imp === null)
           ? "–"
@@ -849,7 +880,11 @@
         });
     });
 
-    // Inicial
+    // Imprimir solo historial
+    document.getElementById("btnImprimirHistorial").addEventListener("click", () => {
+      window.print();
+    });
+
     window.addEventListener("load", () => {
       cargarRegistros();
     });
@@ -862,11 +897,6 @@
     const dataObleasTotales = [2586,1571,1926,2179,2049,2096,2600,2535,2505,2545];
     const impactoCRPC   = [16,14,13,15,16,16,15,16,16,18];
     const impactoObleas = [13,10,11,11,11,11,12,12,12,12];
-    const labelsTalleres = [
-      'Minuto GNC','Zico','Colón GNC','Tabach','Franco Alta Gracia',
-      'Calera Torres','Silvana Calera','Córdoba GNC','Brochero','Valparaíso'
-    ];
-    const dataTalleres = [950,880,760,640,590,540,480,430,400,360];
 
     const valueLabelsPlugin = {
       id: 'valueLabels',
@@ -1003,32 +1033,6 @@
         scales:{
           x:{ grid:{ display:false }, ticks:{ font:{ size:13, weight:'600' } } },
           y:{ beginAtZero:true, max:20, grid:{ color:'rgba(148,163,184,0.3)' }, ticks:{ font:{ size:11 } } }
-        }
-      },
-      plugins:[valueLabelsPlugin]
-    });
-
-    new Chart(document.getElementById('chartTalleres'), {
-      type:'bar',
-      data:{ labels:labelsTalleres, datasets:[{
-        label:'Cilindros CRPC (año)',
-        data:dataTalleres,
-        backgroundColor:'rgba(17,24,39,0.9)',
-        borderRadius:8,
-        barThickness:22,
-        maxBarThickness:28
-      }]},
-      options:{
-        indexAxis:'y',
-        responsive:true,
-        maintainAspectRatio:false,
-        plugins:{
-          legend:{ display:false },
-          tooltip:{ callbacks:{ label:ctx=>` ${ctx.parsed.x} cilindros` } }
-        },
-        scales:{
-          x:{ beginAtZero:true, grid:{ color:'rgba(148,163,184,0.3)' }, ticks:{ font:{ size:12 } } },
-          y:{ grid:{ display:false }, ticks:{ font:{ size:13, weight:'600' } } }
         }
       },
       plugins:[valueLabelsPlugin]
