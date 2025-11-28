@@ -1,819 +1,1313 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<title>Dashboard Final Corregido</title>
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <meta charset="UTF-8">
+  <title>Quiroga CRPC – Presentación + Impacto diario</title>
 
-<style>
-:root{
-  --brand-red:#d50000;
-  --brand-yellow:#ffd600;
-  --bg:#f4f6f9;
-  --card-bg:#ffffff;
-  --text-main:#111827;
-  --text-muted:#6b7280;
-  --line-soft:#e5e7eb;
-}
+  <!-- Chart.js para los gráficos de la presentación -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-/* base */
-body{
-  background:var(--bg);
-  color:var(--text-main);
-  font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
-}
-.text-primary{ color:var(--brand-red) !important; }
-.text-success{ color:#198754 !important; }
-.text-danger{ color:#dc3545 !important; }
+  <style>
+    :root{
+      --bg:#f4f5f7;
+      --card-bg:#ffffff;
+      --border:#d1d5db;
+      --text-main:#111827;
+      --text-muted:#6b7280;
+      --brand-red:#b71c1c;
+      --ok:#16a34a;
+    }
 
-.card-box{
-  background:var(--card-bg);
-  border-radius:12px;
-  padding:15px;
-  box-shadow:0 2px 6px rgba(15,23,42,0.08);
-  border:1px solid var(--line-soft);
-}
-.chart-small{
-  width:180px !important;
-  height:180px !important;
-  margin:auto;
-}
-.chart-small canvas{
-  width:180px !important;
-  height:180px !important;
-}
+    *{
+      box-sizing:border-box;
+      margin:0;
+      padding:0;
+    }
 
-/* métricas de cabecera */
-.card-metric{
-  display:flex;
-  flex-direction:column;
-  align-items:flex-start;
-  gap:4px;
-  border-top:4px solid var(--brand-red);
-}
-.card-metric h4{
-  font-size:.9rem;
-  text-transform:uppercase;
-  letter-spacing:.12em;
-  color:var(--text-muted);
-  margin:0;
-}
-.card-metric h2{
-  font-size:1.8rem;
-  font-weight:700;
-  margin:0;
-}
+    html{
+      scroll-behavior:smooth;
+    }
 
-/* casillas de detalle mensual */
-.month-card{
-  padding:30px 22px;
-  min-height:180px;
-}
-.month-card h5{
-  font-size:1.15rem;
-  margin-bottom:8px;
-}
-.month-card h2{
-  font-size:2.6rem;
-}
+    body{
+      background:var(--bg);
+      color:var(--text-main);
+      font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+    }
 
-/* títulos dentro de tarjetas en rojo corporativo */
-.card-box h3,
-.card-box h4,
-.card-box h5{
-  color:var(--brand-red);
-}
+    /* Top bar OSCURA y clara de leer */
+    .top-nav{
+      position:sticky;
+      top:0;
+      z-index:20;
+      background:#111827;
+      backdrop-filter:blur(6px);
+      border-bottom:1px solid #020617;
+    }
+    .top-nav-inner{
+      max-width:1200px;
+      margin:0 auto;
+      padding:8px 18px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+    }
+    .brand{
+      display:flex;
+      align-items:center;
+      gap:10px;
+    }
+    .brand-logo{
+      width:34px;
+      height:34px;
+      border-radius:999px;
+      background:var(--brand-red);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      color:#ffeb3b;
+      font-weight:900;
+      font-size:22px;
+      box-shadow:0 4px 10px rgba(0,0,0,0.6);
+    }
+    .brand-text{
+      display:flex;
+      flex-direction:column;
+      line-height:1.1;
+    }
+    .brand-title{
+      font-size:15px;
+      font-weight:700;
+      letter-spacing:.12em;
+      text-transform:uppercase;
+      color:#f9fafb;
+    }
+    .brand-sub{
+      font-size:11px;
+      color:#9ca3af;
+      text-transform:uppercase;
+      letter-spacing:.14em;
+    }
 
-/* números de comparación 2024–2025 en negro */
-.comparison-value{
-  color:#111827 !important;
-}
+    .nav-links{
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
+    }
+    .nav-links a{
+      text-decoration:none;
+      font-size:14px;
+      font-weight:600;
+      color:#e5e7eb;
+      background:rgba(15,23,42,0.9);
+      padding:6px 12px;
+      border-radius:999px;
+      border:1px solid #4b5563;
+    }
+    .nav-links a:hover{
+      background:var(--brand-red);
+      border-color:var(--brand-red);
+      color:#ffffff;
+      box-shadow:0 0 0 1px rgba(248,250,252,0.2);
+    }
 
-/* tabs corporativas */
-.nav-tabs{
-  border-bottom:1px solid var(--line-soft);
-}
-.nav-tabs .nav-link{
-  color:var(--text-muted);
-  font-weight:500;
-  border:0;
-}
-.nav-tabs .nav-link:hover{
-  color:var(--brand-red);
-}
-.nav-tabs .nav-link.active{
-  background:var(--card-bg);
-  color:var(--brand-red);
-  border:0;
-  border-bottom:3px solid var(--brand-red);
-}
+    /* Layout principal */
+    .page{
+      max-width:1200px;
+      margin:0 auto 40px;
+      padding:20px 18px 40px;
+    }
 
-/* cajas de comparación */
-.border-primary,
-.border-success,
-.border-warning{
-  border-color:var(--brand-red) !important;
-}
+    /* HERO (Presentación ejecutiva) – blanco, limpio */
+    .hero{
+      position:relative;
+      background:#ffffff;
+      border-radius:24px;
+      padding:24px 24px 26px;
+      border:1px solid #e5e7eb;
+      box-shadow:0 12px 30px rgba(15,23,42,0.20);
+      overflow:hidden;
+      margin-bottom:26px;
+    }
 
-/* porcentajes GRANDES */
-.delta-up,
-.delta-down,
-.delta-neutral{
-  font-size:1.35rem;
-  font-weight:700;
-}
-.delta-up{
-  color:#198754;
-}
-.delta-down{
-  color:#dc3545;
-}
-.delta-neutral{
-  color:var(--text-muted);
-}
+    .hero-content{
+      max-width:620px;
+      position:relative;
+      z-index:1;
+    }
+    .hero-badge{
+      display:inline-block;
+      padding:4px 10px;
+      border-radius:999px;
+      border:1px solid var(--brand-red);
+      font-size:12px;
+      letter-spacing:.14em;
+      text-transform:uppercase;
+      margin-bottom:6px;
+      color:#fef2f2;
+      background:var(--brand-red);
+    }
+    .hero-title{
+      font-size:30px;
+      font-weight:800;
+      text-transform:uppercase;
+      letter-spacing:.06em;
+      margin-bottom:6px;
+      color:#111827;
+    }
+    .hero-subtitle{
+      font-size:16px;
+      color:#374151;
+      margin-bottom:10px;
+    }
+    .hero-bullets{
+      font-size:14px;
+      color:#111827;
+      padding-left:18px;
+    }
+    .hero-bullets li{
+      margin-bottom:4px;
+    }
 
-/* tablas */
-table.table th{
-  background:#eef1f5;
-  font-weight:600;
-}
+    .hero-watermark{
+      position:absolute;
+      right:-40px;
+      bottom:-80px;
+      width:280px;
+      height:280px;
+      border-radius:50%;
+      border:10px solid rgba(183,28,28,0.06);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+    }
+    .hero-watermark span{
+      font-size:220px;
+      font-weight:900;
+      color:rgba(183,28,28,0.04);
+      transform:translateY(10px);
+    }
 
-/* ==== INTRO LOGO Q ==== */
-#intro{
-  position:fixed;
-  inset:0;
-  background:var(--brand-yellow);
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  z-index:9999;
-  text-align:center;
-  animation:introScreen 2.8s ease-out forwards;
-}
+    /* Secciones generales */
+    section{
+      margin-bottom:30px;
+    }
+    .section-header{
+      margin-bottom:14px;
+    }
+    .section-title{
+      font-size:22px;
+      font-weight:800;
+      margin-bottom:2px;
+      color:#111827;
+    }
+    .section-subtitle{
+      font-size:14px;
+      color:var(--text-muted);
+    }
 
-.logo-container{
-  width:190px;
-  height:190px;
-  margin:0 auto 20px auto;
-  background:var(--brand-red);
-  border-radius:50%;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  box-shadow:0 18px 40px rgba(0,0,0,0.38);
-  animation:logo-pop 1.1s cubic-bezier(0.2,0.8,0.3,1.25);
-  position:relative;
-  overflow:hidden;
-}
+    /* Grids y cards */
+    .grid-3{
+      display:grid;
+      grid-template-columns:repeat(3,minmax(0,1fr));
+      gap:16px;
+    }
+    .grid-2{
+      display:grid;
+      grid-template-columns:repeat(2,minmax(0,1fr));
+      gap:18px;
+    }
+    @media(max-width:900px){
+      .grid-2,.grid-3{grid-template-columns:1fr;}
+    }
 
-.logo-letter{
-  color:var(--brand-yellow);
-  font-weight:900;
-  font-size:118px;
-  transform:translate(-4px,-6px);
-  text-shadow:0 4px 10px rgba(0,0,0,0.35);
-}
+    .card{
+      background:var(--card-bg);
+      border-radius:18px;
+      padding:18px 20px;
+      border:1px solid var(--border);
+      box-shadow:0 6px 20px rgba(15,23,42,0.12);
+    }
+    .card-title{
+      font-size:15px;
+      font-weight:700;
+      text-transform:uppercase;
+      letter-spacing:.08em;
+      color:var(--brand-red);
+      margin-bottom:8px;
+    }
+    .card-value{
+      font-size:34px;
+      font-weight:800;
+      margin-bottom:4px;
+    }
+    .card-value.ok{ color:var(--ok); }
+    .card-label{
+      font-size:14px;
+      color:var(--text-muted);
+      margin-bottom:6px;
+    }
+    .card-note{
+      font-size:14px;
+      color:var(--text-muted);
+    }
+    .arrow{
+      font-size:28px;
+      margin-right:6px;
+      vertical-align:middle;
+    }
 
-.intro-title{
-  font-size:1.4rem;
-  font-weight:700;
-  letter-spacing:0.18em;
-  text-transform:uppercase;
-  margin-bottom:4px;
-  color:#7a0000;
-  animation:text-slide 0.8s ease-out 0.4s forwards;
-  opacity:0;
-}
-.intro-line{
-  width:120px;
-  height:2px;
-  background:#7a0000;
-  margin:0 auto;
-  border-radius:999px;
-  transform-origin:center;
-  transform:scaleX(0);
-  animation:line-grow 0.6s ease-out 0.9s forwards;
-}
+    .chart-card{
+      background:var(--card-bg);
+      border-radius:18px;
+      padding:16px 18px;
+      border:1px solid var(--border);
+      box-shadow:0 6px 18px rgba(15,23,42,0.10);
+    }
+    .chart-title{
+      font-size:15px;
+      font-weight:600;
+      color:var(--brand-red);
+      margin-bottom:2px;
+    }
+    .chart-subtitle{
+      font-size:13px;
+      color:var(--text-muted);
+      margin-bottom:8px;
+    }
+    .chart-container{
+      width:100%;
+      height:300px;
+    }
+    canvas{
+      width:100% !important;
+      height:100% !important;
+    }
 
-/* selector de meses con botones grandes */
-.month-selector{
-  display:flex;
-  flex-wrap:wrap;
-  gap:8px;
-}
-.btn-month{
-  flex:1 1 70px;
-  min-width:70px;
-  padding:8px 10px;
-  border-radius:999px;
-  border:1px solid var(--line-soft);
-  background:#ffffff;
-  font-weight:600;
-  font-size:.95rem;
-  text-align:center;
-  cursor:pointer;
-}
-.btn-month.active{
-  background:var(--brand-red);
-  color:#ffffff;
-  border-color:var(--brand-red);
-  box-shadow:0 0 0 2px rgba(213,0,0,0.18);
-}
+    .key-list{
+      font-size:14px;
+      color:var(--text-muted);
+      padding-left:18px;
+    }
+    .key-list li{
+      margin-bottom:4px;
+    }
 
-/* Animaciones */
-@keyframes introScreen{
-  0%{
-    opacity:0;
-    transform:scale(1.02);
-    background:var(--brand-yellow);
-  }
-  20%{
-    opacity:1;
-    transform:scale(1);
-    background:var(--brand-yellow);
-  }
-  70%{
-    opacity:1;
-    transform:scale(1);
-    background:var(--brand-yellow);
-  }
-  100%{
-    opacity:0;
-    transform:scale(1);
-    background:var(--bg);
-    pointer-events:none;
-  }
-}
-@keyframes logo-pop{
-  0%   { transform:scale(0) rotate(-20deg); opacity:0; }
-  55%  { transform:scale(1.08) rotate(4deg); opacity:1; }
-  100% { transform:scale(1) rotate(0deg); opacity:1; }
-}
-@keyframes text-slide{
-  from { opacity:0; transform:translateY(18px); }
-  to   { opacity:1; transform:translateY(0); }
-}
-@keyframes line-grow{
-  from { transform:scaleX(0); }
-  to   { transform:scaleX(1); }
-}
+    .mini-tag{
+      display:inline-block;
+      padding:2px 8px;
+      border-radius:999px;
+      font-size:11px;
+      border:1px solid var(--border);
+      color:var(--text-muted);
+      margin-bottom:4px;
+    }
 
-@media (max-width:480px){
-  .logo-container{ width:150px; height:150px; }
-  .logo-letter{ font-size:96px; transform:translate(-3px,-4px); }
-  .intro-title{ font-size:1.1rem; }
-}
+    /* ==== PANEL DIARIO ONLINE ==== */
 
-/* ==== MAPA TALLERES CRPC (Pestaña nueva) ==== */
-.map-wrapper-crpc{
-  position:relative;
-  width:100%;
-  border-radius:16px;
-  overflow:hidden;
-  border:1px solid var(--line-soft);
-  min-height:70vh; /* grande en monitores */
-  background:#000;
-}
-.map-wrapper-crpc iframe{
-  position:absolute;
-  inset:0;
-  width:100%;
-  height:100%;
-  border:0;
-}
+    .badge{
+      display:inline-block;
+      padding:4px 10px;
+      border-radius:999px;
+      border:1px solid var(--border);
+      font-size:12px;
+      letter-spacing:.12em;
+      text-transform:uppercase;
+      color:var(--text-muted);
+      margin-bottom:6px;
+      background:#ffffff;
+    }
 
-@media (max-width:768px){
-  .map-wrapper-crpc{
-    min-height:60vh;
-  }
-}
-</style>
+    .daily-layout{
+      display:grid;
+      grid-template-columns: 1.4fr 1fr;
+      gap:18px;
+      margin-bottom:22px;
+    }
+    @media(max-width:900px){
+      .daily-layout{
+        grid-template-columns:1fr;
+      }
+    }
 
+    .date-label{
+      font-size:14px;
+      color:#374151;
+      margin-bottom:12px;
+      font-weight:600;
+    }
+
+    /* RESUMEN DE HOY: más grande y contrastado */
+    .card-resumen-hoy{
+      border:2px solid #111827;
+    }
+
+    .kpi{
+      padding:12px 14px;
+      border-radius:14px;
+      border:2px solid #111827;
+      background:#ffffff;
+    }
+    .kpi-label{
+      font-size:13px;
+      text-transform:uppercase;
+      letter-spacing:.10em;
+      color:#4b5563;
+      margin-bottom:6px;
+      font-weight:700;
+    }
+    .kpi-value{
+      font-size:30px;
+      font-weight:800;
+      color:#111827;
+    }
+    .kpi-value.ok{
+      color:#15803d;
+    }
+    .kpi-extra{
+      font-size:13px;
+      color:#6b7280;
+      margin-top:4px;
+    }
+
+    .note{
+      font-size:13px;
+      color:var(--text-muted);
+      margin-top:6px;
+    }
+
+    form{
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+    }
+    label{
+      font-size:14px;
+      color:var(--text-main);
+      font-weight:500;
+    }
+    input[type="number"],
+    input[type="date"]{
+      width:100%;
+      padding:8px 10px;
+      border-radius:8px;
+      border:1px solid var(--border);
+      font-size:14px;
+    }
+    input[type="number"]:focus,
+    input[type="date"]:focus{
+      outline:none;
+      border-color:var(--brand-red);
+      box-shadow:0 0 0 1px rgba(183,28,28,0.25);
+    }
+
+    .btn{
+      margin-top:6px;
+      padding:9px 12px;
+      border-radius:8px;
+      border:1px solid var(--brand-red);
+      background:var(--brand-red);
+      color:#fff;
+      font-size:14px;
+      font-weight:600;
+      cursor:pointer;
+    }
+    .btn:hover{
+      background:#7f1d1d;
+      border-color:#7f1d1d;
+    }
+
+    .btn-secondary{
+      border-color:#9ca3af;
+      background:#e5e7eb;
+      color:#111827;
+    }
+    .btn-secondary:hover{
+      background:#d1d5db;
+      border-color:#6b7280;
+    }
+
+    .small-muted{
+      font-size:12px;
+      color:var(--text-muted);
+      margin-top:6px;
+    }
+
+    .hist-header{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:10px;
+      margin-bottom:8px;
+    }
+    .hist-header-title{
+      font-size:14px;
+      font-weight:600;
+      text-transform:uppercase;
+      letter-spacing:.08em;
+      color:var(--brand-red);
+    }
+    .hist-desc{
+      font-size:12px;
+      color:var(--text-muted);
+    }
+
+    table{
+      width:100%;
+      border-collapse:collapse;
+      font-size:13px;
+    }
+    th, td{
+      border-bottom:1px solid #e5e7eb;
+      padding:6px 6px;
+      text-align:left;
+    }
+    th{
+      background:#f3f4f6;
+      font-weight:600;
+    }
+    td.num{
+      text-align:right;
+      font-variant-numeric:tabular-nums;
+    }
+    tr:nth-child(even) td{
+      background:#fafafa;
+    }
+    .empty-row td{
+      text-align:center;
+      font-size:12px;
+      color:var(--text-muted);
+    }
+
+    .chk-center{
+      text-align:center;
+    }
+  </style>
 </head>
 <body>
 
-<!-- INTRO LOGO Q -->
-<div id="intro">
-  <div>
-    <div class="logo-container">
-      <span class="logo-letter">Q</span>
+  <!-- Barra superior -->
+  <div class="top-nav">
+    <div class="top-nav-inner">
+      <div class="brand">
+        <div class="brand-logo">Q</div>
+        <div class="brand-text">
+          <div class="brand-title">QUIROGA GNC</div>
+          <div class="brand-sub">CRPC · ESTADÍSTICAS 2025</div>
+        </div>
+      </div>
+      <nav class="nav-links">
+        <a href="#presentacion">Presentación</a>
+        <a href="#hoy">Hoy</a>
+        <a href="#resumen">Resumen</a>
+        <a href="#cantidades">Cantidades</a>
+        <a href="#impacto">Impacto</a>
+        <a href="#talleres">Talleres</a>
+      </nav>
     </div>
-    <div class="intro-title">Estadisticas Quiroga gnc</div>
-    <div class="intro-line"></div>
   </div>
-</div>
 
-<div class="container py-4">
-  <h1 class="text-center fw-bold mb-4 text-primary">QUIROGA CRPC / Obleas</h1>
+  <main class="page">
 
-  <!-- ORDEN NUEVO: General / Impacto / Detalle / Comparación / Mapa -->
-  <ul class="nav nav-tabs">
-    <li class="nav-item"><button class="nav-link active" data-bs-toggle="tab" data-bs-target="#general">General</button></li>
-    <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#impacto">Impacto</button></li>
-    <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#detalle">Detalle mensual</button></li>
-    <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#comparacion">Comparación 2024 vs 2025</button></li>
-    <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#mapa">Mapa talleres CRPC</button></li>
-  </ul>
-
-  <div class="tab-content mt-4">
-    <!-- GENERAL -->
-    <div class="tab-pane fade show active" id="general">
-      <div class="row text-center mb-4">
-        <div class="col-md-4">
-          <div class="card-box card-metric">
-            <h4>CRPC</h4><h2>8300</h2>
-          </div>
-        </div>
-        <div class="col-md-4">
-          <div class="card-box card-metric">
-            <h4>Quirgroup</h4><h2>3920</h2>
-          </div>
-        </div>
-        <div class="col-md-4">
-          <div class="card-box card-metric">
-            <h4>Quiroga</h4><h2>18672</h2>
-          </div>
-        </div>
-      </div>
-
-      <div class="card mb-4">
-        <div class="card-body">
-          <h5 class="text-center text-primary">CRPC por mes</h5>
-          <canvas id="ch1"></canvas>
-        </div>
-      </div>
-      <div class="card mb-4">
-        <div class="card-body">
-          <h5 class="text-center">Obleas Quirgroup por mes</h5>
-          <canvas id="ch2"></canvas>
-        </div>
-      </div>
-      <div class="card mb-4">
-        <div class="card-body">
-          <h5 class="text-center">Obleas Quiroga por mes</h5>
-          <canvas id="ch3"></canvas>
-        </div>
-      </div>
-    </div>
-
-    <!-- IMPACTO -->
-    <div class="tab-pane fade" id="impacto">
-      <h3 class="fw-bold text-center mb-4 text-primary">Impacto General</h3>
-
-      <div class="row text-center mb-4">
-        <div class="col-md-6">
-          <div class="card-box">
-            <h4>Impacto CRPC en Córdoba</h4>
-            <h2>16%</h2>
-            <div class="chart-small"><canvas id="donut1"></canvas></div>
-          </div>
-        </div>
-
-        <div class="col-md-6">
-          <div class="card-box">
-            <h4>Impacto Obleas (Quiroga + Quirgroup)</h4>
-            <h2>11%</h2>
-            <div class="chart-small"><canvas id="donut2"></canvas></div>
-          </div>
-        </div>
-      </div>
-
-      <h4 class="mt-4">Detalle Mensual CRPC</h4>
-      <table class="table table-bordered bg-white">
-        <tr><th>Mes</th><th>Taller</th><th>Córdoba</th><th>Impacto %</th></tr>
-        <tr><td>Enero</td><td>947</td><td>6008</td><td>16%</td></tr>
-        <tr><td>Febrero</td><td>655</td><td>4748</td><td>14%</td></tr>
-        <tr><td>Marzo</td><td>557</td><td>4446</td><td>13%</td></tr>
-        <tr><td>Abril</td><td>692</td><td>4557</td><td>15%</td></tr>
-        <tr><td>Mayo</td><td>660</td><td>4201</td><td>16%</td></tr>
-        <tr><td>Junio</td><td>777</td><td>4841</td><td>16%</td></tr>
-        <tr><td>Julio</td><td>1027</td><td>6684</td><td>15%</td></tr>
-        <tr><td>Agosto</td><td>931</td><td>5669</td><td>16%</td></tr>
-        <tr><td>Septiembre</td><td>955</td><td>5926</td><td>16%</td></tr>
-        <tr><td>Octubre</td><td>1099</td><td>6048</td><td>18%</td></tr>
-      </table>
-
-      <h4 class="mt-4">Detalle Mensual Obleas</h4>
-      <table class="table table-bordered bg-white">
-        <tr><th>Mes</th><th>(QG+Q)</th><th>Córdoba</th><th>Impacto %</th></tr>
-        <tr><td>Enero</td><td>2586</td><td>19200</td><td>13%</td></tr>
-        <tr><td>Febrero</td><td>1571</td><td>16409</td><td>10%</td></tr>
-        <tr><td>Marzo</td><td>1926</td><td>18317</td><td>11%</td></tr>
-        <tr><td>Abril</td><td>2179</td><td>20245</td><td>11%</td></tr>
-        <tr><td>Mayo</td><td>2049</td><td>18659</td><td>11%</td></tr>
-        <tr><td>Junio</td><td>2096</td><td>18235</td><td>11%</td></tr>
-        <tr><td>Julio</td><td>2600</td><td>22603</td><td>12%</td></tr>
-        <tr><td>Agosto</td><td>2535</td><td>20510</td><td>12%</td></tr>
-        <tr><td>Septiembre</td><td>2505</td><td>21002</td><td>12%</td></tr>
-        <tr><td>Octubre</td><td>2545</td><td>21447</td><td>12%</td></tr>
-      </table>
-    </div>
-
-    <!-- DETALLE MENSUAL UNIFICADO -->
-    <div class="tab-pane fade" id="detalle">
-      <div class="mb-3">
-        <h4 class="text-primary mb-1">Detalle mensual</h4>
-        <div class="text-muted">Elegí un mes tocando un botón. Mes: <span id="selectedMonth" class="fw-semibold">Enero</span> 2025</div>
-      </div>
-
-      <div class="card-box mb-4">
-        <div class="month-selector">
-          <button type="button" class="btn-month active" data-month="Enero">Ene</button>
-          <button type="button" class="btn-month" data-month="Febrero">Feb</button>
-          <button type="button" class="btn-month" data-month="Marzo">Mar</button>
-          <button type="button" class="btn-month" data-month="Abril">Abr</button>
-          <button type="button" class="btn-month" data-month="Mayo">May</button>
-          <button type="button" class="btn-month" data-month="Junio">Jun</button>
-          <button type="button" class="btn-month" data-month="Julio">Jul</button>
-          <button type="button" class="btn-month" data-month="Agosto">Ago</button>
-          <button type="button" class="btn-month" data-month="Septiembre">Sep</button>
-          <button type="button" class="btn-month" data-month="Octubre">Oct</button>
-        </div>
-      </div>
-
-      <div class="row g-4">
-        <div class="col-md-4">
-          <div class="card-box text-center month-card">
-            <h5 class="text-primary">CRPC</h5>
-            <h2 id="crpcValue">947</h2>
-            <div id="crpcDelta" class="delta-neutral">—</div>
-          </div>
-        </div>
-        <div class="col-md-4">
-          <div class="card-box text-center month-card">
-            <h5 class="text-primary">Quirgroup</h5>
-            <h2 id="quirValue">570</h2>
-            <div id="quirDelta" class="delta-neutral">—</div>
-          </div>
-        </div>
-        <div class="col-md-4">
-          <div class="card-box text-center month-card">
-            <h5 class="text-primary">Quiroga</h5>
-            <h2 id="quirogaValue">2016</h2>
-            <div id="quirogaDelta" class="delta-neutral">—</div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- COMPARACIÓN -->
-    <div class="tab-pane fade" id="comparacion">
-      <div class="row g-4 align-items-center my-4">
-        <div class="col-md-8">
-          <div class="card-box text-center">
-            <h5 class="text-primary fw-bold">CRPC – Comparación 2024 vs 2025</h5>
-            <canvas id="cmp_crpc"></canvas>
-          </div>
-        </div>
-        <div class="col-md-4">
-          <div class="card-box border border-primary text-center mb-3">
-            <h6>CRPC Enero 2024 → 2025</h6>
-            <h4 class="fw-bold comparison-value">562 → 947</h4>
-            <span class="delta-up">+68%</span>
-          </div>
-          <div class="card-box border border-primary text-center">
-            <h6>CRPC Febrero 2024 → 2025</h6>
-            <h4 class="fw-bold comparison-value">696 → 655</h4>
-            <span class="delta-down">-6%</span>
-          </div>
-        </div>
-      </div>
-
-      <div class="row g-4 align-items-center my-4">
-        <div class="col-md-8">
-          <div class="card-box text-center">
-            <h5 class="text-primary fw-bold">Quirgroup – Comparación 2024 vs 2025</h5>
-            <canvas id="cmp_quir"></canvas>
-          </div>
-        </div>
-        <div class="col-md-4">
-          <div class="card-box border border-primary text-center mb-3">
-            <h6>Enero 2024 → 2025</h6>
-            <h4 class="fw-bold comparison-value">345 → 570</h4>
-            <span class="delta-up">+65%</span>
-          </div>
-          <div class="card-box border border-primary text-center">
-            <h6>Febrero 2024 → 2025</h6>
-            <h4 class="fw-bold comparison-value">253 → 226</h4>
-            <span class="delta-down">-11%</span>
-          </div>
-        </div>
-      </div>
-
-      <div class="row g-4 align-items-center my-4">
-        <div class="col-md-8">
-          <div class="card-box text-center">
-            <h5 class="text-primary fw-bold">Quiroga – Comparación 2024 vs 2025</h5>
-            <canvas id="cmp_quiroga"></canvas>
-          </div>
-        </div>
-        <div class="col-md-4">
-          <div class="card-box border border-primary text-center mb-3">
-            <h6>Enero 2024 → 2025</h6>
-            <h4 class="fw-bold comparison-value">1118 → 2016</h4>
-            <span class="delta-up">+80%</span>
-          </div>
-          <div class="card-box border border-primary text-center">
-            <h6>Febrero 2024 → 2025</h6>
-            <h4 class="fw-bold comparison-value">1553 → 1345</h4>
-            <span class="delta-down">-13%</span>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- MAPA TALLERES CRPC -->
-    <div class="tab-pane fade" id="mapa">
-      <div class="card-box">
-        <h3 class="text-center text-primary mb-2">Mapa de talleres que envian cilindros al CRPC</h3>
-        <p class="text-center text-muted small mb-3">
-          Rojo: talleres que trabajan con CRPC · Azul: talleres que no trabajan con nosotros
+    <!-- ===== 0. PRESENTACIÓN EJECUTIVA (PRIMERO) ===== -->
+    <section class="hero" id="presentacion">
+      <div class="hero-content">
+        <div class="hero-badge">Presentación ejecutiva</div>
+        <h1 class="hero-title">CRPC & Obleas · Córdoba 2025</h1>
+        <p class="hero-subtitle">
+          Situación del año en una sola vista: cuánto procesamos, qué peso tenemos en Córdoba
+          y quiénes son los talleres que más nos empujan.
         </p>
-        <div class="map-wrapper-crpc">
-          <!-- Si no carga, copiar "Insertar en mi sitio" desde My Maps y reemplazar el src -->
-          <iframe
-            src="https://www.google.com/maps/d/u/0/embed?mid=1UJDYhfdJhdRsFy3Twa0Nf0D9G8qMx7Y&ehbc=2E312F"
-            loading="lazy"
-            referrerpolicy="no-referrer-when-downgrade"
-            allowfullscreen>
-          </iframe>
-        </div>
+        <ul class="hero-bullets">
+          <li><strong>8.300 cilindros</strong> procesados en el CRPC (10 meses).</li>
+          <li>Participación promedio: <strong>16 %</strong> de los cilindros y <strong>11 %</strong> de las obleas de Córdoba.</li>
+          <li>Meses pico claros y concentración en pocos talleres.</li>
+        </ul>
       </div>
-    </div>
+      <div class="hero-watermark">
+        <span>Q</span>
+      </div>
+    </section>
 
-  </div><!-- tab-content -->
-</div><!-- container -->
+    <!-- ===== 1. PANEL DIARIO ONLINE ===== -->
+    <section id="hoy">
+      <header class="section-header">
+        <div class="badge">Impacto diario online</div>
+        <h2 class="section-title">Quiroga CRPC vs Córdoba – Hoy</h2>
+        <p class="section-subtitle">
+          Cargás los cilindros de Córdoba y del CRPC del día. Se guarda en Firebase y todos
+          los que abran esta página ven lo mismo, con historial y borrado.
+        </p>
+      </header>
 
-<script>
-const labels = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct'];
+      <div class="daily-layout">
+        <!-- Panel de resultados -->
+        <section class="card card-resumen-hoy">
+          <div class="card-title">Resumen de hoy</div>
+          <div class="date-label" id="lblFecha"></div>
 
-// CRPC por mes – rojo fuerte
-new Chart(document.getElementById('ch1'),{
-  type:'bar',
-  data:{
-    labels:labels,
-    datasets:[{
-      label:'CRPC',
-      data:[947, 655, 557, 692, 660, 777, 1027, 931, 955, 1099],
-      backgroundColor:'rgba(213,0,0,0.9)',
-      borderRadius:8
-    }]
-  },
-  options:{ responsive:true, plugins:{ legend:{ display:false } } }
-});
+          <div class="grid-3">
+            <div class="kpi">
+              <div class="kpi-label">Córdoba hoy</div>
+              <div class="kpi-value" id="kpiCordoba">0</div>
+              <div class="kpi-extra">Cilindros hechos en Córdoba.</div>
+            </div>
+            <div class="kpi">
+              <div class="kpi-label">Quiroga CRPC hoy</div>
+              <div class="kpi-value" id="kpiQuiroga">0</div>
+              <div class="kpi-extra">Cilindros procesados en el CRPC.</div>
+            </div>
+            <div class="kpi">
+              <div class="kpi-label">Impacto hoy</div>
+              <div class="kpi-value ok" id="kpiImpacto">0%</div>
+              <div class="kpi-extra">Porcentaje de Córdoba que pasa por el CRPC.</div>
+            </div>
+          </div>
 
-// Quirgroup – rojo medio
-new Chart(document.getElementById('ch2'),{
-  type:'bar',
-  data:{
-    labels:labels,
-    datasets:[{
-      label:'Quirgroup',
-      data:[570, 226, 276, 410, 373, 321, 417, 429, 463, 435],
-      backgroundColor:'rgba(213,0,0,0.7)',
-      borderRadius:8
-    }]
-  },
-  options:{ responsive:true, plugins:{ legend:{ display:false } } }
-});
+          <p class="note">
+            Fórmula: <strong>Impacto = (Quiroga / Córdoba) × 100</strong>.  
+            Si Córdoba es 0, se muestra “–”.
+          </p>
+        </section>
 
-// Quiroga – rojo suave
-new Chart(document.getElementById('ch3'),{
-  type:'bar',
-  data:{
-    labels:labels,
-    datasets:[{
-      label:'Quiroga',
-      data:[2016, 1345, 1650, 1769, 1676, 1775, 2183, 2106, 2042, 2110],
-      backgroundColor:'rgba(213,0,0,0.4)',
-      borderColor:'rgba(213,0,0,0.8)',
-      borderWidth:1,
-      borderRadius:8
-    }]
-  },
-  options:{ responsive:true, plugins:{ legend:{ display:false } } }
-});
+        <!-- Formulario -->
+        <section class="card">
+          <div class="card-title">Cargar datos del día</div>
+          <p class="date-label" id="lblFechaForm"></p>
 
-// Donut CRPC – rojo vs gris
-new Chart(document.getElementById('donut1'),{
-  type:'doughnut',
-  data:{
-    labels:['CRPC','Resto Córdoba'],
-    datasets:[{
-      data:[8300,44828],
-      backgroundColor:['#d50000','#e5e7eb'],
-      borderWidth:0
-    }]
-  },
-  options:{
-    responsive:false,
-    maintainAspectRatio:false,
-    cutout:'60%',
-    plugins:{ legend:{ display:false } }
-  }
-});
+          <form id="formImpacto">
+            <div>
+              <label for="inpFecha">Fecha de los datos</label>
+              <input type="date" id="inpFecha">
+            </div>
 
-// Donut Obleas
-new Chart(document.getElementById('donut2'),{
-  type:'doughnut',
-  data:{
-    labels:['Obleas Taller','Resto Córdoba'],
-    datasets:[{
-      data:[22592,174035],
-      backgroundColor:['rgba(213,0,0,0.9)','#e5e7eb'],
-      borderWidth:0
-    }]
-  },
-  options:{
-    responsive:false,
-    maintainAspectRatio:false,
-    cutout:'60%',
-    plugins:{ legend:{ display:false } }
-  }
-});
+            <div>
+              <label for="inpCordoba">Cilindros hechos en Córdoba</label>
+              <input type="number" id="inpCordoba" min="0" step="1" placeholder="Ej: 200">
+            </div>
 
-// Comparación 2024 vs 2025
-const cmpLabels = ['Enero','Febrero'];
+            <div>
+              <label for="inpQuiroga">Cilindros hechos en Quiroga CRPC</label>
+              <input type="number" id="inpQuiroga" min="0" step="1" placeholder="Ej: 70">
+            </div>
 
-new Chart(document.getElementById('cmp_crpc'), {
-  type: 'bar',
-  data: {
-    labels: cmpLabels,
-    datasets: [
-      {
-        label: '2024',
-        data: [562, 696],
-        backgroundColor: 'rgba(213,0,0,0.35)'
-      },
-      {
-        label: '2025',
-        data: [947, 655],
-        backgroundColor: 'rgba(213,0,0,0.85)'
+            <button class="btn" type="submit">Guardar / agregar día</button>
+
+            <div class="small-muted">
+              Podés cambiar la fecha antes de guardar.  
+              Si te equivocás, borrás la fila y la volvés a cargar con la fecha correcta.
+            </div>
+          </form>
+        </section>
+      </div>
+
+      <!-- Historial -->
+      <section class="card">
+        <div class="hist-header">
+          <div>
+            <div class="hist-header-title">Historial de días guardados (online)</div>
+            <div class="hist-desc">
+              Datos guardados en Firestore (Firebase).  
+              Se muestra un registro por guardado (podés tener varios del mismo día).
+            </div>
+          </div>
+          <div>
+            <button type="button" class="btn btn-secondary" id="btnBorrarSeleccionados">
+              Borrar seleccionados
+            </button>
+          </div>
+        </div>
+
+        <table>
+          <thead>
+            <tr>
+              <th>Fecha</th>
+              <th class="num">Córdoba</th>
+              <th class="num">Quiroga</th>
+              <th class="num">Impacto %</th>
+              <th class="chk-center">Sel.</th>
+            </tr>
+          </thead>
+          <tbody id="tbodyHistorial">
+            <!-- Filas generadas por JS -->
+          </tbody>
+        </table>
+      </section>
+    </section>
+
+    <!-- ===== 2. RESUMEN ANUAL ===== -->
+    <section id="resumen">
+      <header class="section-header">
+        <h2 class="section-title">1. Resumen anual</h2>
+        <p class="section-subtitle">
+          Totales del año y lectura rápida para que quede claro en 10 segundos.
+        </p>
+      </header>
+
+      <div class="grid-3" style="margin-bottom:16px;">
+        <article class="card">
+          <div class="card-title">CRPC – cilindros 2025</div>
+          <div class="card-value">8.300</div>
+          <div class="card-label">Cilindros procesados en 10 meses.</div>
+          <div class="card-note">
+            Volumen suficiente para mostrar que el CRPC de Quiroga es
+            un jugador fuerte dentro de la provincia.
+          </div>
+        </article>
+        <article class="card">
+          <div class="card-title">Obleas Quirgroup</div>
+          <div class="card-value">3.920</div>
+          <div class="card-label">Obleas emitidas por Quirgroup en el año.</div>
+          <div class="card-note">
+            Flujo constante de obleas, acompañando el movimiento de cilindros.
+          </div>
+        </article>
+        <article class="card">
+          <div class="card-title">Obleas Quiroga</div>
+          <div class="card-value">18.672</div>
+          <div class="card-label">Obleas emitidas por Quiroga en el año.</div>
+          <div class="card-note">
+            La base fuerte de obleas está concentrada en Quiroga taller.
+          </div>
+        </article>
+      </div>
+
+      <div class="grid-3">
+        <article class="card">
+          <div class="card-title">CRPC 2025 vs 2024</div>
+          <div class="card-value ok">
+            <span class="arrow">▲</span>+18%
+          </div>
+          <div class="card-label">Cilindros totales procesados.</div>
+          <div class="card-note">
+            2025 supera a 2024. Mensaje simple: <strong>este año se trabajó más.</strong>
+          </div>
+        </article>
+        <article class="card">
+          <div class="card-title">Impacto CRPC en Córdoba</div>
+          <div class="card-value">16%</div>
+          <div class="card-label">Participación promedio del año.</div>
+          <div class="card-note">
+            De cada 100 cilindros de Córdoba, <strong>16 pasan por nuestro CRPC.</strong>
+          </div>
+        </article>
+        <article class="card">
+          <div class="card-title">Impacto obleas del taller</div>
+          <div class="card-value">11%</div>
+          <div class="card-label">Quiroga + Quirgroup.</div>
+          <div class="card-note">
+            De cada 100 obleas de la provincia, unas <strong>11 salen del taller.</strong>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- ===== 3. CANTIDADES MENSUALES ===== -->
+    <section id="cantidades">
+      <header class="section-header">
+        <h2 class="section-title">2. Cantidades mensuales</h2>
+        <p class="section-subtitle">
+          Barras simples, un gráfico para cilindros y otro para obleas, con el número escrito encima.
+        </p>
+      </header>
+
+      <div class="grid-2">
+        <article class="chart-card">
+          <div class="chart-title">CRPC por mes</div>
+          <div class="chart-subtitle">Cilindros procesados en el CRPC.</div>
+          <div class="chart-container">
+            <canvas id="chartCrpcMes"></canvas>
+          </div>
+        </article>
+
+        <article class="chart-card">
+          <div class="chart-title">Obleas por mes</div>
+          <div class="chart-subtitle">Obleas totales del taller (Quiroga + Quirgroup).</div>
+          <div class="chart-container">
+            <canvas id="chartObleasMes"></canvas>
+          </div>
+        </article>
+      </div>
+
+      <article class="card" style="margin-top:16px;">
+        <div class="card-title">Lectura rápida</div>
+        <ul class="key-list">
+          <li><strong>Picos de CRPC:</strong> Julio (1.027) y Octubre (1.099).</li>
+          <li><strong>Mes más bajo CRPC:</strong> Marzo (557 cilindros).</li>
+          <li>Las obleas acompañan bastante bien los picos de CRPC, sin meses “muertos”.</li>
+        </ul>
+      </article>
+    </section>
+
+    <!-- ===== 4. IMPACTO MENSUAL ===== -->
+    <section id="impacto">
+      <header class="section-header">
+        <h2 class="section-title">3. Impacto mensual en Córdoba</h2>
+        <p class="section-subtitle">
+          Qué porcentaje representamos del total de la provincia, mes a mes.
+        </p>
+      </header>
+
+      <div class="grid-2">
+        <article class="chart-card">
+          <div class="chart-title">Impacto CRPC (%)</div>
+          <div class="chart-subtitle">
+            Porcentaje de cilindros de Quiroga sobre el total de cilindros de Córdoba.
+          </div>
+          <div class="chart-container">
+            <canvas id="chartImpactCrpc"></canvas>
+          </div>
+        </article>
+
+        <article class="chart-card">
+          <div class="chart-title">Impacto obleas (%)</div>
+          <div class="chart-subtitle">
+            Porcentaje de obleas del taller sobre el total de obleas de Córdoba.
+          </div>
+          <div class="chart-container">
+            <canvas id="chartImpactObleas"></canvas>
+          </div>
+        </article>
+      </div>
+
+      <article class="card" style="margin-top:16px;">
+        <div class="card-title">Lectura rápida</div>
+        <ul class="key-list">
+          <li>El CRPC se mueve casi siempre entre <strong>15 % y 16 %</strong>, con un máximo del 18 % en octubre.</li>
+          <li>Las obleas se mantienen entre <strong>10 % y 12 %</strong>, sin caídas bruscas.</li>
+          <li>Mensaje para el jefe: <strong>somos una parte estable del mercado de Córdoba, no algo marginal.</strong></li>
+        </ul>
+      </article>
+    </section>
+
+    <!-- ===== 5. TALLERES ===== -->
+    <section id="talleres">
+      <header class="section-header">
+        <h2 class="section-title">4. Talleres que más aportan</h2>
+        <p class="section-subtitle">
+          Ranking simple de talleres por cilindros enviados al CRPC (ejemplo con 10 principales).
+        </p>
+      </header>
+
+      <div class="grid-2">
+        <article class="chart-card">
+          <div class="chart-title">Top talleres por cilindros CRPC</div>
+          <div class="chart-subtitle">
+            Barras horizontales, nombre grande y número escrito a la derecha.
+          </div>
+          <div class="chart-container">
+            <canvas id="chartTalleres"></canvas>
+          </div>
+        </article>
+
+        <article class="card">
+          <div class="mini-tag">Conclusiones</div>
+          <div class="card-title" style="margin-top:4px;">Concentración de volumen</div>
+          <ul class="key-list">
+            <li>Los 3 primeros talleres explican una parte importante del volumen total del CRPC.</li>
+            <li>Permite decidir dónde cuidar la relación comercial y dónde hay espacio para crecer.</li>
+            <li>En una versión real se pueden listar todos los talleres, no solo el Top 10.</li>
+          </ul>
+        </article>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Firebase v8 -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+
+  <script>
+    // ===== CONFIGURACIÓN REAL DE TU PROYECTO FIREBASE =====
+    const firebaseConfig = {
+      apiKey: "AIzaSyAq1_VIg5BtPH9QPS5NwuJDrVCqyfQ3qwU",
+      authDomain: "estadisticas-diarias.firebaseapp.com",
+      databaseURL: "https://estadisticas-diarias-default-rtdb.firebaseio.com",
+      projectId: "estadisticas-diarias",
+      storageBucket: "estadisticas-diarias.firebasestorage.app",
+      messagingSenderId: "952047688138",
+      appId: "1:952047688138:web:5e01162214f6ee7bd71733",
+      measurementId: "G-BD9QD9241G"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    var db = firebase.firestore();
+    var COLLECTION_NAME = "impacto_diario";
+
+    var registros = [];
+
+    function getHoyISO(){
+      var hoy = new Date();
+      return hoy.toISOString().slice(0,10); // AAAA-MM-DD
+    }
+
+    function formatFechaISO(fechaISO){
+      var partes = fechaISO.split("-");
+      if(partes.length !== 3) return fechaISO;
+      var y = partes[0], m = partes[1], d = partes[2];
+      return d + "/" + m + "/" + y;
+    }
+
+    function calcularImpacto(cordoba, quiroga){
+      if(cordoba <= 0) return null;
+      return (quiroga / cordoba) * 100;
+    }
+
+    function cargarRegistros(){
+      db.collection(COLLECTION_NAME)
+        .orderBy("fecha", "desc")
+        .orderBy("createdAt", "desc")
+        .get()
+        .then(function(snapshot){
+          registros = [];
+          snapshot.forEach(function(doc){
+            var data = doc.data();
+            registros.push({
+              docId: doc.id,
+              fecha: data.fecha,
+              cordoba: data.cordoba || 0,
+              quiroga: data.quiroga || 0,
+              createdAt: data.createdAt || null
+            });
+          });
+          renderTodo();
+        })
+        .catch(function(err){
+          console.error("Error al leer Firestore", err);
+        });
+    }
+
+    function obtenerResumenHoy(){
+      var hoyISO = getHoyISO();
+      for(var i = 0; i < registros.length; i++){
+        if(registros[i].fecha === hoyISO){
+          return registros[i];
+        }
       }
-    ]
-  },
-  options: {
-    responsive: true,
-    plugins: { legend: { position: 'top' } }
-  }
-});
+      return null;
+    }
 
-new Chart(document.getElementById('cmp_quir'), {
-  type: 'bar',
-  data: {
-    labels: cmpLabels,
-    datasets: [
-      {
-        label: '2024',
-        data: [345, 253],
-        backgroundColor: 'rgba(213,0,0,0.35)'
-      },
-      {
-        label: '2025',
-        data: [570, 226],
-        backgroundColor: 'rgba(213,0,0,0.85)'
+    function renderResumen(){
+      var lblFecha = document.getElementById("lblFecha");
+      var lblFechaForm = document.getElementById("lblFechaForm");
+      var kpiCordoba = document.getElementById("kpiCordoba");
+      var kpiQuiroga = document.getElementById("kpiQuiroga");
+      var kpiImpacto = document.getElementById("kpiImpacto");
+      var inpCordoba = document.getElementById("inpCordoba");
+      var inpQuiroga = document.getElementById("inpQuiroga");
+      var inpFecha = document.getElementById("inpFecha");
+
+      var hoyISO = getHoyISO();
+      var fechaTextoHoy = formatFechaISO(hoyISO);
+      var resumen = obtenerResumenHoy();
+
+      var cordoba = 0;
+      var quiroga = 0;
+
+      if(resumen){
+        cordoba = resumen.cordoba || 0;
+        quiroga = resumen.quiroga || 0;
       }
-    ]
-  },
-  options: {
-    responsive: true,
-    plugins: { legend: { position: 'top' } }
-  }
-});
 
-new Chart(document.getElementById('cmp_quiroga'), {
-  type: 'bar',
-  data: {
-    labels: cmpLabels,
-    datasets: [
-      {
-        label: '2024',
-        data: [1118, 1553],
-        backgroundColor: 'rgba(213,0,0,0.35)'
-      },
-      {
-        label: '2025',
-        data: [2016, 1345],
-        backgroundColor: 'rgba(213,0,0,0.85)'
+      // Resumen siempre habla de HOY
+      lblFecha.textContent = "Datos del día de hoy: " + fechaTextoHoy;
+
+      // Texto del formulario (la fecha la elige el usuario)
+      lblFechaForm.textContent = "Seleccioná la fecha de los datos (por defecto hoy).";
+
+      // Por defecto, el input de fecha arranca en hoy si está vacío
+      if(!inpFecha.value){
+        inpFecha.value = hoyISO;
       }
-    ]
-  },
-  options: {
-    responsive: true,
-    plugins: { legend: { position: 'top' } }
-  }
-});
 
-/* ====== DETALLE MENSUAL (botones) ====== */
-const monthsData = {
-  'Enero': {
-    crpc:    { value: 947,  delta: null },
-    quir:    { value: 570,  delta: null },
-    quiroga: { value: 2016, delta: null }
-  },
-  'Febrero': {
-    crpc:    { value: 655,  delta: -31 },
-    quir:    { value: 226,  delta: -60 },
-    quiroga: { value: 1345, delta: -33 }
-  },
-  'Marzo': {
-    crpc:    { value: 557,  delta: -15 },
-    quir:    { value: 276,  delta:  22 },
-    quiroga: { value: 1650, delta:  23 }
-  },
-  'Abril': {
-    crpc:    { value: 692,  delta:  24 },
-    quir:    { value: 410,  delta:  49 },
-    quiroga: { value: 1769, delta:   7 }
-  },
-  'Mayo': {
-    crpc:    { value: 660,  delta:  -5 },
-    quir:    { value: 373,  delta:  -9 },
-    quiroga: { value: 1676, delta:  -5 }
-  },
-  'Junio': {
-    crpc:    { value: 777,  delta:  18 },
-    quir:    { value: 321,  delta: -14 },
-    quiroga: { value: 1775, delta:   6 }
-  },
-  'Julio': {
-    crpc:    { value: 1027, delta:  32 },
-    quir:    { value: 417,  delta:  30 },
-    quiroga: { value: 2183, delta:  23 }
-  },
-  'Agosto': {
-    crpc:    { value: 931,  delta:  -9 },
-    quir:    { value: 429,  delta:   3 },
-    quiroga: { value: 2106, delta:  -4 }
-  },
-  'Septiembre': {
-    crpc:    { value: 955,  delta:   3 },
-    quir:    { value: 463,  delta:   8 },
-    quiroga: { value: 2042, delta:  -3 }
-  },
-  'Octubre': {
-    crpc:    { value: 1099, delta:  15 },
-    quir:    { value: 435,  delta:  -6 },
-    quiroga: { value: 2110, delta:   3 }
-  }
-};
+      kpiCordoba.textContent = cordoba;
+      kpiQuiroga.textContent = quiroga;
 
-function setDelta(el, delta){
-  el.classList.remove('delta-up','delta-down','delta-neutral');
-  if(delta === null){
-    el.classList.add('delta-neutral');
-    el.textContent = '—';
-  }else if(delta > 0){
-    el.classList.add('delta-up');
-    el.textContent = `+${delta}%`;
-  }else if(delta < 0){
-    el.classList.add('delta-down');
-    el.textContent = `${delta}%`;
-  }else{
-    el.classList.add('delta-neutral');
-    el.textContent = '0%';
-  }
-}
+      var impacto = calcularImpacto(cordoba, quiroga);
+      if(impacto === null){
+        kpiImpacto.textContent = "–";
+      }else{
+        kpiImpacto.textContent = impacto.toFixed(1).replace(".",",") + "%";
+      }
 
-function updateMonthCards(month){
-  const data = monthsData[month];
-  if(!data) return;
+      // No autocompleto los inputs numéricos con hoy, los dejos vacíos
+      inpCordoba.value = "";
+      inpQuiroga.value = "";
+    }
 
-  document.getElementById('selectedMonth').textContent = month;
+    function renderTabla(){
+      var tbody = document.getElementById("tbodyHistorial");
+      tbody.innerHTML = "";
 
-  const crpcValue   = document.getElementById('crpcValue');
-  const quirValue   = document.getElementById('quirValue');
-  const quirogaValue= document.getElementById('quirogaValue');
+      if(registros.length === 0){
+        var trVacio = document.createElement("tr");
+        trVacio.classList.add("empty-row");
+        var tdVacio = document.createElement("td");
+        tdVacio.colSpan = 5;
+        tdVacio.textContent = "Sin registros guardados.";
+        trVacio.appendChild(tdVacio);
+        tbody.appendChild(trVacio);
+        return;
+      }
 
-  const crpcDelta   = document.getElementById('crpcDelta');
-  const quirDelta   = document.getElementById('quirDelta');
-  const quirogaDelta= document.getElementById('quirogaDelta');
+      var ordenados = registros.slice();
 
-  crpcValue.textContent    = data.crpc.value;
-  quirValue.textContent    = data.quir.value;
-  quirogaValue.textContent = data.quiroga.value;
+      ordenados.forEach(function(reg){
+        var tr = document.createElement("tr");
 
-  setDelta(crpcDelta,   data.crpc.delta);
-  setDelta(quirDelta,   data.quir.delta);
-  setDelta(quirogaDelta,data.quiroga.delta);
-}
+        var tdFecha = document.createElement("td");
+        tdFecha.textContent = formatFechaISO(reg.fecha);
+        tr.appendChild(tdFecha);
 
-document.addEventListener('DOMContentLoaded', () => {
-  updateMonthCards('Enero');
+        var tdCordoba = document.createElement("td");
+        tdCordoba.classList.add("num");
+        tdCordoba.textContent = reg.cordoba || 0;
+        tr.appendChild(tdCordoba);
 
-  const monthButtons = document.querySelectorAll('.btn-month');
-  monthButtons.forEach(btn => {
-    btn.addEventListener('click', () => {
-      monthButtons.forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      const m = btn.getAttribute('data-month');
-      updateMonthCards(m);
+        var tdQuiroga = document.createElement("td");
+        tdQuiroga.classList.add("num");
+        tdQuiroga.textContent = reg.quiroga || 0;
+        tr.appendChild(tdQuiroga);
+
+        var tdImpacto = document.createElement("td");
+        tdImpacto.classList.add("num");
+        var imp = calcularImpacto(reg.cordoba, reg.quiroga);
+        tdImpacto.textContent = (imp === null)
+          ? "–"
+          : imp.toFixed(1).replace(".",",") + "%";
+        tr.appendChild(tdImpacto);
+
+        var tdSel = document.createElement("td");
+        tdSel.classList.add("chk-center");
+        var chk = document.createElement("input");
+        chk.type = "checkbox";
+        chk.classList.add("fila-check");
+        chk.dataset.id = reg.docId;
+        tdSel.appendChild(chk);
+        tr.appendChild(tdSel);
+
+        tbody.appendChild(tr);
+      });
+    }
+
+    function renderTodo(){
+      renderResumen();
+      renderTabla();
+    }
+
+    document.getElementById("formImpacto").addEventListener("submit", function(e){
+      e.preventDefault();
+
+      var inpCordoba = document.getElementById("inpCordoba");
+      var inpQuiroga = document.getElementById("inpQuiroga");
+      var inpFecha = document.getElementById("inpFecha");
+
+      var cordoba = parseInt(inpCordoba.value, 10) || 0;
+      var quiroga = parseInt(inpQuiroga.value, 10) || 0;
+      var fecha = inpFecha.value || getHoyISO(); // fecha elegida o hoy por defecto
+
+      db.collection(COLLECTION_NAME).add({
+        fecha: fecha,
+        cordoba: cordoba,
+        quiroga: quiroga,
+        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+      })
+      .then(function(){
+        // Limpio inputs numéricos, dejo la fecha como está
+        inpCordoba.value = "";
+        inpQuiroga.value = "";
+        cargarRegistros();
+      })
+      .catch(function(err){
+        console.error("Error al guardar en Firestore", err);
+      });
     });
-  });
-});
-</script>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    document.getElementById("btnBorrarSeleccionados").addEventListener("click", function(){
+      var checks = document.querySelectorAll(".fila-check:checked");
+      if(checks.length === 0){
+        return;
+      }
+
+      var ids = Array.prototype.map.call(checks, function(chk){
+        return chk.dataset.id;
+      });
+
+      var batch = db.batch();
+      ids.forEach(function(id){
+        var ref = db.collection(COLLECTION_NAME).doc(id);
+        batch.delete(ref);
+      });
+
+      batch.commit()
+        .then(function(){
+          cargarRegistros();
+        })
+        .catch(function(err){
+          console.error("Error borrando registros", err);
+        });
+    });
+
+    // Inicio panel diario
+    cargarRegistros();
+  </script>
+
+  <script>
+    // ===== DATOS PRESENTACIÓN 2025 (Chart.js) =====
+    const labelsMeses = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct'];
+
+    const dataCRPC  = [947, 655, 557, 692, 660, 777, 1027, 931, 955, 1099];
+    const dataObleasTotales = [2586,1571,1926,2179,2049,2096,2600,2535,2505,2545];
+
+    const impactoCRPC   = [16,14,13,15,16,16,15,16,16,18];
+    const impactoObleas = [13,10,11,11,11,11,12,12,12,12];
+
+    const labelsTalleres = [
+      'Minuto GNC',
+      'Zico',
+      'Colón GNC',
+      'Tabach',
+      'Franco Alta Gracia',
+      'Calera Torres',
+      'Silvana Calera',
+      'Córdoba GNC',
+      'Brochero',
+      'Valparaíso'
+    ];
+    const dataTalleres = [950, 880, 760, 640, 590, 540, 480, 430, 400, 360];
+
+    // Plugin: escribe números negros encima de las barras.
+    // Para los gráficos de impacto, agrega el %.
+    const valueLabelsPlugin = {
+      id: 'valueLabels',
+      afterDatasetsDraw(chart, args, pluginOptions) {
+        const {ctx} = chart;
+        const isImpactChart =
+          chart.canvas &&
+          (chart.canvas.id === 'chartImpactCrpc' ||
+           chart.canvas.id === 'chartImpactObleas');
+
+        chart.data.datasets.forEach((dataset, datasetIndex) => {
+          const meta = chart.getDatasetMeta(datasetIndex);
+          if (meta.hidden) return;
+          meta.data.forEach((el, index) => {
+            const value = dataset.data[index];
+            if (value == null) return;
+
+            const text = isImpactChart ? value + '%' : value;
+
+            ctx.save();
+            ctx.fillStyle = '#111827';
+            ctx.font = 'bold 12px system-ui';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'bottom';
+
+            if (chart.options.indexAxis === 'y') {
+              const x = el.x + 8;
+              const y = el.y + 4;
+              ctx.textAlign = 'left';
+              ctx.textBaseline = 'middle';
+              ctx.fillText(text, x, y);
+            } else {
+              const x = el.x;
+              const y = el.y - 3;
+              ctx.fillText(text, x, y);
+            }
+            ctx.restore();
+          });
+        });
+      }
+    };
+
+    new Chart(document.getElementById('chartCrpcMes'), {
+      type:'bar',
+      data:{
+        labels:labelsMeses,
+        datasets:[{
+          label:'CRPC',
+          data:dataCRPC,
+          backgroundColor:'rgba(17,24,39,0.9)',
+          borderRadius:8,
+          barThickness:26,
+          maxBarThickness:32
+        }]
+      },
+      options:{
+        responsive:true,
+        maintainAspectRatio:false,
+        plugins:{
+          legend:{ display:false },
+          tooltip:{
+            callbacks:{ label:ctx=>` ${ctx.parsed.y} cilindros` }
+          }
+        },
+        scales:{
+          x:{
+            grid:{ display:false },
+            ticks:{ font:{ size:13, weight:'600' } }
+          },
+          y:{
+            beginAtZero:true,
+            grid:{ color:'rgba(148,163,184,0.3)' },
+            ticks:{ font:{ size:11 } }
+          }
+        }
+      },
+      plugins:[valueLabelsPlugin]
+    });
+
+    new Chart(document.getElementById('chartObleasMes'), {
+      type:'bar',
+      data:{
+        labels:labelsMeses,
+        datasets:[{
+          label:'Obleas (Q+QG)',
+          data:dataObleasTotales,
+          backgroundColor:'rgba(183,28,28,0.9)',
+          borderRadius:8,
+          barThickness:26,
+          maxBarThickness:32
+        }]
+      },
+      options:{
+        responsive:true,
+        maintainAspectRatio:false,
+        plugins:{
+          legend:{ display:false },
+          tooltip:{
+            callbacks:{ label:ctx=>` ${ctx.parsed.y} obleas` }
+          }
+        },
+        scales:{
+          x:{
+            grid:{ display:false },
+            ticks:{ font:{ size:13, weight:'600' } }
+          },
+          y:{
+            beginAtZero:true,
+            grid:{ color:'rgba(148,163,184,0.3)' },
+            ticks:{ font:{ size:11 } }
+          }
+        }
+      },
+      plugins:[valueLabelsPlugin]
+    });
+
+    new Chart(document.getElementById('chartImpactCrpc'), {
+      type:'bar',
+      data:{
+        labels:labelsMeses,
+        datasets:[{
+          label:'Impacto CRPC %',
+          data:impactoCRPC,
+          backgroundColor:'rgba(21,101,192,0.9)',
+          borderRadius:8,
+          barThickness:24,
+          maxBarThickness:30
+        }]
+      },
+      options:{
+        responsive:true,
+        maintainAspectRatio:false,
+        plugins:{
+          legend:{ display:false },
+          tooltip:{
+            callbacks:{ label:ctx=>` ${ctx.parsed.y}%` }
+          }
+        },
+        scales:{
+          x:{
+            grid:{ display:false },
+            ticks:{ font:{ size:13, weight:'600' } }
+          },
+          y:{
+            beginAtZero:true,
+            max:20,
+            grid:{ color:'rgba(148,163,184,0.3)' },
+            ticks:{ font:{ size:11 } }
+          }
+        }
+      },
+      plugins:[valueLabelsPlugin]
+    });
+
+    new Chart(document.getElementById('chartImpactObleas'), {
+      type:'bar',
+      data:{
+        labels:labelsMeses,
+        datasets:[{
+          label:'Impacto obleas %',
+          data:impactoObleas,
+          backgroundColor:'rgba(183,28,28,0.9)',
+          borderRadius:8,
+          barThickness:24,
+          maxBarThickness:30
+        }]
+      },
+      options:{
+        responsive:true,
+        maintainAspectRatio:false,
+        plugins:{
+          legend:{ display:false },
+          tooltip:{
+            callbacks:{ label:ctx=>` ${ctx.parsed.y}%` }
+          }
+        },
+        scales:{
+          x:{
+            grid:{ display:false },
+            ticks:{ font:{ size:13, weight:'600' } }
+          },
+          y:{
+            beginAtZero:true,
+            max:20,
+            grid:{ color:'rgba(148,163,184,0.3)' },
+            ticks:{ font:{ size:11 } }
+          }
+        }
+      },
+      plugins:[valueLabelsPlugin]
+    });
+
+    new Chart(document.getElementById('chartTalleres'), {
+      type:'bar',
+      data:{
+        labels:labelsTalleres,
+        datasets:[{
+          label:'Cilindros CRPC (año)',
+          data:dataTalleres,
+          backgroundColor:'rgba(17,24,39,0.9)',
+          borderRadius:8,
+          barThickness:22,
+          maxBarThickness:28
+        }]
+      },
+      options:{
+        indexAxis:'y',
+        responsive:true,
+        maintainAspectRatio:false,
+        plugins:{
+          legend:{ display:false },
+          tooltip:{
+            callbacks:{ label:ctx=>` ${ctx.parsed.x} cilindros` }
+          }
+        },
+        scales:{
+          x:{
+            beginAtZero:true,
+            grid:{ color:'rgba(148,163,184,0.3)' },
+            ticks:{ font:{ size:12 } }
+          },
+          y:{
+            grid:{ display:false },
+            ticks:{ font:{ size:13, weight:'600' } }
+          }
+        }
+      },
+      plugins:[valueLabelsPlugin]
+    });
+  </script>
+
 </body>
 </html>
