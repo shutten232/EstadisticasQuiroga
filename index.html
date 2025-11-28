@@ -13,7 +13,7 @@
       --card-bg:#ffffff;
       --border:#d1d5db;
       --text-main:#111827;
-      --text-muted:#111827;      /* 👉 antes gris, ahora oscuro */
+      --text-muted:#111827;
       --brand-red:#b71c1c;
       --ok:#16a34a;
     }
@@ -23,6 +23,54 @@
       background:var(--bg);
       color:var(--text-main);
       font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+    }
+
+    /* INTRO LOGO */
+    .intro-overlay{
+      position:fixed;
+      inset:0;
+      background:#020617;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      justify-content:center;
+      gap:14px;
+      z-index:9999;
+    }
+    .intro-logo-circle{
+      width:96px; height:96px;
+      border-radius:999px;
+      background:var(--brand-red);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      color:#ffeb3b;
+      font-weight:900;
+      font-size:56px;
+      box-shadow:0 18px 45px rgba(0,0,0,0.85);
+      animation:introPop .7s ease-out;
+    }
+    .intro-text{
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      text-transform:uppercase;
+      letter-spacing:.18em;
+    }
+    .intro-title{
+      font-size:15px;
+      font-weight:700;
+      color:#e5e7eb;
+    }
+    .intro-sub{
+      margin-top:4px;
+      font-size:11px;
+      color:#9ca3af;
+    }
+    @keyframes introPop{
+      0%{ transform:scale(.4); opacity:0; }
+      60%{ transform:scale(1.08); opacity:1; }
+      100%{ transform:scale(1); opacity:1; }
     }
 
     /* TOP BAR */
@@ -46,7 +94,8 @@
       width:34px; height:34px;
       border-radius:999px;
       background:var(--brand-red);
-      display:flex; align-items:center; justify-content:center;
+      display:flex;
+      align-items:center; justify-content:center;
       color:#ffeb3b; font-weight:900; font-size:22px;
       box-shadow:0 4px 10px rgba(0,0,0,0.6);
     }
@@ -112,12 +161,12 @@
     }
     .hero-subtitle{
       font-size:16px;
-      color:var(--text-main);  /* 👉 antes gris */
+      color:var(--text-main);
       margin-bottom:10px;
     }
     .hero-bullets{
       font-size:14px;
-      color:var(--text-main);  /* 👉 más oscuro */
+      color:var(--text-main);
       padding-left:18px;
     }
     .hero-bullets li{ margin-bottom:4px; }
@@ -143,7 +192,7 @@
     }
     .section-subtitle{
       font-size:14px;
-      color:var(--text-main);   /* 👉 más contraste */
+      color:var(--text-main);
     }
 
     .grid-3{
@@ -178,12 +227,12 @@
     .card-value.ok{ color:var(--ok); }
     .card-label{
       font-size:14px;
-      color:var(--text-main);  /* 👉 antes muted */
+      color:var(--text-main);
       margin-bottom:6px;
     }
     .card-note{
       font-size:14px;
-      color:var(--text-main);  /* 👉 más oscuro */
+      color:var(--text-main);
     }
 
     .chart-card{
@@ -196,7 +245,7 @@
     .chart-title{ font-size:15px; font-weight:600; color:var(--brand-red); margin-bottom:2px; }
     .chart-subtitle{
       font-size:13px;
-      color:var(--text-main);   /* 👉 más legible */
+      color:var(--text-main);
       margin-bottom:8px;
     }
     .chart-container{ width:100%; height:300px; }
@@ -204,7 +253,7 @@
 
     .key-list{
       font-size:14px;
-      color:var(--text-main);   /* 👉 oscuro */
+      color:var(--text-main);
       padding-left:18px;
     }
     .key-list li{ margin-bottom:4px; }
@@ -215,7 +264,7 @@
       border-radius:999px;
       font-size:11px;
       border:1px solid var(--border);
-      color:var(--text-main);   /* 👉 también más fuerte */
+      color:var(--text-main);
       margin-bottom:4px;
     }
 
@@ -227,7 +276,7 @@
       font-size:12px;
       letter-spacing:.12em;
       text-transform:uppercase;
-      color:var(--text-main);   /* 👉 oscuro */
+      color:var(--text-main);
       margin-bottom:6px;
       background:#ffffff;
     }
@@ -244,7 +293,7 @@
     }
     .date-label{
       font-size:14px;
-      color:var(--text-main);   /* 👉 antes gris */
+      color:var(--text-main);
       margin-bottom:12px;
       font-weight:600;
     }
@@ -260,7 +309,7 @@
       font-size:13px;
       text-transform:uppercase;
       letter-spacing:.10em;
-      color:var(--text-main);   /* 👉 más oscuro */
+      color:var(--text-main);
       margin-bottom:6px;
       font-weight:700;
     }
@@ -268,12 +317,12 @@
     .kpi-value.ok{ color:#15803d; }
     .kpi-extra{
       font-size:13px;
-      color:var(--text-main);   /* 👉 más contraste */
+      color:var(--text-main);
       margin-top:4px;
     }
     .note{
       font-size:13px;
-      color:var(--text-main);   /* 👉 antes muted */
+      color:var(--text-main);
       margin-top:6px;
     }
 
@@ -312,7 +361,7 @@
     }
     .small-muted{
       font-size:12px;
-      color:var(--text-main);   /* 👉 más oscuro */
+      color:var(--text-main);
       margin-top:6px;
     }
 
@@ -327,7 +376,7 @@
     }
     .hist-desc{
       font-size:12px;
-      color:var(--text-main);    /* 👉 oscuro */
+      color:var(--text-main);
     }
 
     .hist-actions{
@@ -347,6 +396,7 @@
       width:100%;
       border-collapse:collapse;
       font-size:13px;
+      text-align:center;   /* 👉 centramos por defecto */
     }
     th, td{
       border-bottom:1px solid #e5e7eb;
@@ -355,10 +405,9 @@
     th{
       background:#f3f4f6;
       font-weight:600;
-      text-align:center;
     }
     td.num{
-      text-align:right;
+      text-align:center;   /* 👉 números centrados */
       font-variant-numeric:tabular-nums;
     }
     td.impact-cell{
@@ -370,7 +419,7 @@
     .empty-row td{
       text-align:center;
       font-size:12px;
-      color:var(--text-main);   /* 👉 para que se lea */
+      color:var(--text-main);
     }
     .chk-center{
       text-align:center;
@@ -400,6 +449,15 @@
 </head>
 <body>
 
+  <!-- INTRO LOGO -->
+  <div class="intro-overlay no-print" id="introOverlay">
+    <div class="intro-logo-circle">Q</div>
+    <div class="intro-text">
+      <span class="intro-title">QUIROGA GNC</span>
+      <span class="intro-sub">CRPC · ESTADÍSTICAS 2025</span>
+    </div>
+  </div>
+
   <!-- NAV -->
   <div class="top-nav no-print">
     <div class="top-nav-inner">
@@ -426,11 +484,10 @@
     <!-- PRESENTACIÓN EJECUTIVA -->
     <section class="hero no-print" id="presentacion">
       <div class="hero-content">
-        <div class="hero-badge">Presentación ejecutiva</div>
+        <div class="hero-badge">Presentación</div>
         <h1 class="hero-title">CRPC & Obleas · Córdoba 2025</h1>
         <p class="hero-subtitle">
-          Situación del año en una sola vista: cuánto procesamos, qué peso tenemos en Córdoba
-          y quiénes son los talleres que más nos empujan.
+          Situación del año en una sola vista:
         </p>
         <ul class="hero-bullets">
           <li><strong>8.300 cilindros</strong> procesados en el CRPC (10 meses).</li>
@@ -447,32 +504,31 @@
     <section id="hoy">
       <header class="section-header no-print">
         <div class="badge">Impacto diario online</div>
-        <h2 class="section-title">Quiroga CRPC vs Córdoba – Hoy</h2>
+        <h2 class="section-title">Quiroga CRPC vs Córdoba – Último dato cargado</h2>
         <p class="section-subtitle">
-          Cargás los cilindros de Córdoba y del CRPC del día. Se guarda en Firebase y todos
-          ven lo mismo, con historial y borrado.
+          Se muestra el último día con datos cargados (normalmente el día anterior).
         </p>
       </header>
 
       <div class="daily-layout no-print">
         <!-- Resumen -->
         <section class="card card-resumen-hoy">
-          <div class="card-title">Resumen de hoy</div>
+          <div class="card-title">Resumen de último día cargado</div>
           <div class="date-label" id="lblFecha"></div>
 
           <div class="grid-3">
             <div class="kpi">
-              <div class="kpi-label">Córdoba hoy</div>
+              <div class="kpi-label">Córdoba</div>
               <div class="kpi-value" id="kpiCordoba">0</div>
               <div class="kpi-extra">Cilindros hechos en Córdoba.</div>
             </div>
             <div class="kpi">
-              <div class="kpi-label">Quiroga CRPC hoy</div>
+              <div class="kpi-label">Quiroga CRPC</div>
               <div class="kpi-value" id="kpiQuiroga">0</div>
               <div class="kpi-extra">Cilindros procesados en el CRPC.</div>
             </div>
             <div class="kpi">
-              <div class="kpi-label">Impacto hoy</div>
+              <div class="kpi-label">Impacto</div>
               <div class="kpi-value ok" id="kpiImpacto">0%</div>
               <div class="kpi-extra">Porcentaje de Córdoba que pasa por el CRPC.</div>
             </div>
@@ -581,9 +637,9 @@
 
       <div class="grid-3">
         <article class="card">
-          <div class="card-title">CRPC 2025 vs 2024</div>
+          <div class="card-title">ULTIMO MES-OCTUBRE</div>
           <div class="card-value ok">
-            <span class="arrow">▲</span>+18%
+            ▲+18%
           </div>
           <div class="card-label">Variación de cilindros totales procesados.</div>
         </article>
@@ -765,14 +821,9 @@
         });
     }
 
-    function obtenerResumenHoy(){
-      const hoyISO = getHoyISO();
-      for(let i=0;i<registros.length;i++){
-        if(registros[i].fecha === hoyISO){
-          return registros[i];
-        }
-      }
-      return null;
+    function obtenerUltimoRegistro(){
+      if(registros.length === 0) return null;
+      return registros[0];
     }
 
     function renderResumen(){
@@ -786,18 +837,19 @@
       const inpFecha = document.getElementById("inpFecha");
 
       const hoyISO = getHoyISO();
-      const fechaTextoHoy = formatFechaISO(hoyISO);
-      const resumen = obtenerResumenHoy();
+      const ultimo = obtenerUltimoRegistro();
 
       let cordoba = 0;
       let quiroga = 0;
 
-      if(resumen){
-        cordoba = resumen.cordoba || 0;
-        quiroga = resumen.quiroga || 0;
+      if(ultimo){
+        cordoba = ultimo.cordoba || 0;
+        quiroga = ultimo.quiroga || 0;
+        lblFecha.textContent = "Último día cargado: " + formatFechaISO(ultimo.fecha);
+      }else{
+        lblFecha.textContent = "Sin datos cargados todavía.";
       }
 
-      lblFecha.textContent = "Datos del día de hoy: " + fechaTextoHoy;
       lblFechaForm.textContent = "Seleccioná la fecha de los datos (por defecto hoy).";
 
       if(!inpFecha.value){
@@ -926,6 +978,14 @@
     // Imprimir solo historial
     document.getElementById("btnImprimirHistorial").addEventListener("click", () => {
       window.print();
+    });
+
+    // Intro: ocultar después de un ratito
+    document.addEventListener("DOMContentLoaded", () => {
+      setTimeout(() => {
+        const intro = document.getElementById("introOverlay");
+        if(intro){ intro.style.display = "none"; }
+      }, 1600);
     });
 
     window.addEventListener("load", () => {
