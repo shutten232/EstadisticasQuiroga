@@ -445,6 +445,185 @@
         display:none !important;
       }
     }
+  
+        /* RESUMEN MENSUAL + OBJETIVOS */
+    .resumen-mes{
+      margin-bottom:28px;
+      border:2px solid var(--brand-red);
+      box-shadow:0 10px 26px rgba(15,23,42,0.20);
+      background:linear-gradient(135deg,#ffffff 0,#fffaf0 45%,#fff5f5 100%);
+    }
+    .resumen-mes-header{
+      display:flex;
+      justify-content:space-between;
+      align-items:flex-start;
+      gap:12px;
+      margin-bottom:10px;
+    }
+    .resumen-mes-tit{
+      font-size:20px;
+      font-weight:800;
+      letter-spacing:.10em;
+      text-transform:uppercase;
+      color:var(--brand-red);
+    }
+    .resumen-mes-sub{
+      font-size:14px;
+      color:var(--text-main);
+    }
+    .resumen-mes-meta{
+      font-size:12px;
+      color:var(--text-main);
+      text-align:right;
+    }
+    .resumen-chip{
+      display:inline-block;
+      padding:3px 9px;
+      border-radius:999px;
+      background:#fee2e2;
+      color:var(--brand-red);
+      font-size:10px;
+      font-weight:700;
+      text-transform:uppercase;
+      letter-spacing:.14em;
+      margin-bottom:4px;
+    }
+    .goal-panel{
+      margin-top:4px;
+    }
+    .goal-bar{
+      margin-top:6px;
+    }
+    .goal-track{
+      position:relative;
+      width:100%;
+      height:22px;
+      border-radius:999px;
+      background:#e5e7eb;
+      border:1px solid #d1d5db;
+      overflow:hidden;
+    }
+    .goal-fill{
+      position:absolute;
+      left:0;
+      top:0;
+      height:100%;
+      background:linear-gradient(90deg,#16a34a,#84cc16);
+      border-radius:999px;
+    }
+    .goal-marker{
+      position:absolute;
+      top:-8px;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      font-size:10px;
+      color:var(--text-main);
+    }
+    .goal-marker::before{
+      content:"";
+      width:0;
+      height:30px;
+      border-left:1px dashed rgba(55,65,81,0.7);
+    }
+    .goal-marker span{
+      margin-top:-2px;
+      background:#ffffff;
+      padding:1px 5px;
+      border-radius:999px;
+      border:1px solid #9ca3af;
+    }
+    .goal-marker.marker-800{
+      left:80%;
+      transform:translateX(-50%);
+    }
+    .goal-marker.marker-1000{
+      left:100%;
+      transform:translateX(-100%);
+    }
+    .goal-legend{
+      margin-top:6px;
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
+      font-size:12px;
+      color:var(--text-main);
+    }
+    .goal-legend span::before{
+      margin-right:4px;
+    }
+    .legend-ok::before{
+      content:"●";
+      color:#16a34a;
+    }
+    .legend-ideal::before{
+      content:"◆";
+      color:#fbbf24;
+    }
+    .kpi-resumen-row{
+      display:grid;
+      grid-template-columns:repeat(3,minmax(0,1fr));
+      gap:12px;
+      margin-top:12px;
+    }
+    .kpi-resumen-card{
+      padding:10px 12px;
+      border-radius:14px;
+      border:1px solid var(--border);
+      background:#ffffff;
+    }
+    .kpi-resumen-label{
+      font-size:11px;
+      text-transform:uppercase;
+      letter-spacing:.10em;
+      color:var(--text-main);
+      margin-bottom:4px;
+      font-weight:700;
+    }
+    .kpi-resumen-num{
+      font-size:26px;
+      font-weight:800;
+      color:var(--brand-red);
+      display:flex;
+      align-items:baseline;
+      gap:4px;
+    }
+    .kpi-resumen-trend-up{
+      font-size:11px;
+      color:#16a34a;
+      font-weight:700;
+    }
+    .kpi-resumen-trend-down{
+      font-size:11px;
+      color:#b91c1c;
+      font-weight:700;
+    }
+    .kpi-resumen-foot{
+      margin-top:2px;
+      font-size:12px;
+      color:var(--text-main);
+    }
+    @media(max-width:900px){
+      .resumen-mes-header{
+        flex-direction:column;
+        align-items:flex-start;
+      }
+      .resumen-mes-meta{
+        text-align:left;
+      }
+      .kpi-resumen-row{
+        grid-template-columns:1fr;
+      }
+    }
+
+      .resumen-mes-meta{
+        text-align:left;
+      }
+      .kpi-resumen-row{
+        grid-template-columns:1fr;
+      }
+    }
+
   </style>
 </head>
 <body>
@@ -480,6 +659,82 @@
   </div>
 
   <main class="page">
+
+
+    <!-- RESUMEN MENSUAL CÓRDOBA / QUIROGA -->
+    <section class="card resumen-mes no-print" id="resumen-mensual">
+      <div class="resumen-mes-header">
+        <div>
+          <div class="resumen-chip">Resumen clave del mes</div>
+          <div class="resumen-mes-tit">Resumen mensual · Córdoba</div>
+          <p class="resumen-mes-sub">
+            En noviembre Córdoba cayó un <strong>21,1&nbsp;%</strong> en cilindros,
+            pero el CRPC Quiroga cerró con <strong>891</strong> unidades
+            y ganó participación dentro de la provincia.
+          </p>
+        </div>
+        <div class="resumen-mes-meta">
+          <div><strong>CRPC Quiroga · Uso interno</strong></div>
+          <div>Objetivos: 800 (mínimo) · 1.000 (ideal)</div>
+          <div>Datos cerrados al último día del mes</div>
+        </div>
+      </div>
+
+      <div class="goal-panel">
+        <p class="note" style="margin-top:0;">
+          Objetivo ideal: <strong>1.000 cilindros</strong> ·
+          objetivo mínimo aceptable: <strong>800 cilindros</strong> ·
+          resultado de noviembre: <strong>891 cilindros</strong>.
+        </p>
+        <div class="goal-bar">
+          <div class="goal-track">
+            <!-- 891 sobre 1.000 ≈ 89,1 % -->
+            <div class="goal-fill" style="width:89.1%;"></div>
+            <div class="goal-marker marker-800"><span>800</span></div>
+            <div class="goal-marker marker-1000"><span>1.000</span></div>
+          </div>
+          <div class="goal-legend">
+            <span class="legend-ok">Zona objetivo mínimo (≥ 800 cilindros)</span>
+            <span class="legend-ideal">Objetivo ideal mensual (1.000 cilindros)</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="kpi-resumen-row">
+        <article class="kpi-resumen-card">
+          <div class="kpi-resumen-label">Cilindros en Córdoba</div>
+          <div class="kpi-resumen-num">
+            <span>4.769</span>
+            <span class="kpi-resumen-trend-down">▼ −21,1&nbsp;%</span>
+          </div>
+          <div class="kpi-resumen-foot">
+            Octubre: 6.048 cilindros.
+          </div>
+        </article>
+        <article class="kpi-resumen-card">
+          <div class="kpi-resumen-label">Cilindros en CRPC Quiroga</div>
+          <div class="kpi-resumen-num">
+            <span>891</span>
+            <span class="kpi-resumen-trend-down">▼ −18,9&nbsp;%</span>
+          </div>
+          <div class="kpi-resumen-foot">
+            Octubre: 1.099 cilindros (−208 cilindros vs octubre).
+          </div>
+        </article>
+        <article class="kpi-resumen-card">
+          <div class="kpi-resumen-label">Participación en Córdoba</div>
+          <div class="kpi-resumen-num">
+            <span>18,7&nbsp;%</span>
+            <span class="kpi-resumen-trend-up">▲ +0,5 pts</span>
+          </div>
+          <div class="kpi-resumen-foot">
+            Octubre: 18,2&nbsp;% del total provincial.
+          </div>
+        </article>
+      </div>
+    </section>
+
+
 
     <!-- PRESENTACIÓN EJECUTIVA -->
     <section class="hero no-print" id="presentacion">
