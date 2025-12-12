@@ -1,15 +1,7 @@
-/* Regla: imprimir SOLO el historial cuando la ruta es #hoy */
-@media print {
-  body[data-route="hoy"] *{ visibility:hidden; }
-  body[data-route="hoy"] #historial-print,
-  body[data-route="hoy"] #historial-print *{
-    visibility:visible;
-  }
-  body[data-route="hoy"] #historial-print{
-    position:absolute;
-    left:0;
-    top:0;
-    width:100%;
-  }
+.no-print{}
+@media print{
+  body *{ visibility:hidden; }
+  #historial-print, #historial-print *{ visibility:visible; }
+  #historial-print{ position:absolute; left:0; top:0; width:100%; }
   .no-print{ display:none !important; }
 }

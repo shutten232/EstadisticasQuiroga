@@ -1,19 +1,22 @@
-window.UI = (function(){
-  function setIntroAutoHide(){
-    document.addEventListener("DOMContentLoaded", () => {
-      setTimeout(() => {
-        const intro = document.getElementById("introOverlay");
-        if(intro){ intro.style.display = "none"; }
-      }, 1600);
-    });
+export function introOncePerSession(){
+  const KEY = 'qr_intro_seen_v1';
+  const intro = document.getElementById('introOverlay');
+  if(!intro) return;
+
+  if(sessionStorage.getItem(KEY) === '1'){
+    intro.style.display = 'none';
+    return;
   }
 
-  function setActiveNav(route){
-    document.querySelectorAll(".nav-links a").forEach(a => {
-      const r = (a.getAttribute("href") || "").replace("#","");
-      a.classList.toggle("active", r === route);
-    });
-  }
+  intro.style.display = 'flex';
+  setTimeout(() => {
+    intro.style.display = 'none';
+    sessionStorage.setItem(KEY, '1');
+  }, 1600);
+}
 
-  return { setIntroAutoHide, setActiveNav };
-})();
+export function setActiveNav(route){
+  document.querySelectorAll('.nav-links a[data-route]').forEach(a => {
+    a.classList.toggle('is-active', a.dataset.route === route);
+  });
+}

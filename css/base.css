@@ -3,11 +3,11 @@
   --card-bg:#ffffff;
   --border:#d1d5db;
   --text-main:#111827;
-  --text-muted:#111827;
+  --text-muted:#6b7280;
   --brand-red:#b71c1c;
   --ok:#16a34a;
+  --ink:#111827;
 }
-
 *{ box-sizing:border-box; margin:0; padding:0; }
 html{ scroll-behavior:smooth; }
 body{
