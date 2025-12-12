@@ -1,0 +1,94 @@
+<section id="hoy">
+  <header class="section-header no-print">
+    <div class="badge">Impacto diario online</div>
+    <h2 class="section-title">Quiroga CRPC vs Córdoba – Último dato cargado</h2>
+    <p class="section-subtitle">Se muestra el último día con datos cargados (normalmente el día anterior).</p>
+  </header>
+
+  <div class="daily-layout no-print">
+    <section class="card card-resumen-hoy">
+      <div class="card-title">Resumen de último día cargado</div>
+      <div class="date-label" id="lblFecha"></div>
+
+      <div class="grid-3">
+        <div class="kpi">
+          <div class="kpi-label">Córdoba</div>
+          <div class="kpi-value" id="kpiCordoba">0</div>
+          <div class="kpi-extra">Cilindros hechos en Córdoba.</div>
+        </div>
+        <div class="kpi">
+          <div class="kpi-label">Quiroga CRPC</div>
+          <div class="kpi-value" id="kpiQuiroga">0</div>
+          <div class="kpi-extra">Cilindros procesados en el CRPC.</div>
+        </div>
+        <div class="kpi">
+          <div class="kpi-label">Impacto</div>
+          <div class="kpi-value ok" id="kpiImpacto">0%</div>
+          <div class="kpi-extra">Porcentaje de Córdoba que pasa por el CRPC.</div>
+        </div>
+      </div>
+
+      <p class="note">
+        Fórmula: <strong>Impacto = (Quiroga / Córdoba) × 100</strong>.
+        Si Córdoba es 0, se muestra “–”.
+      </p>
+    </section>
+
+    <section class="card">
+      <div class="card-title">Cargar datos del día</div>
+      <p class="date-label" id="lblFechaForm"></p>
+
+      <form id="formImpacto">
+        <div>
+          <label for="inpFecha">Fecha de los datos</label>
+          <input type="date" id="inpFecha">
+        </div>
+
+        <div>
+          <label for="inpCordoba">Cilindros hechos en Córdoba</label>
+          <input type="number" id="inpCordoba" min="0" step="1" placeholder="Ej: 200">
+        </div>
+
+        <div>
+          <label for="inpQuiroga">Cilindros hechos en Quiroga CRPC</label>
+          <input type="number" id="inpQuiroga" min="0" step="1" placeholder="Ej: 70">
+        </div>
+
+        <button class="btn" type="submit">Guardar / agregar día</button>
+
+        <div class="small-muted">
+          Podés cambiar la fecha antes de guardar.
+          Si te equivocás, borrás la fila y recargás con la fecha correcta.
+        </div>
+      </form>
+    </section>
+  </div>
+
+  <section class="card" id="historial-print">
+    <div class="hist-header">
+      <div>
+        <div class="hist-header-title">Historial de días guardados (online)</div>
+        <div class="hist-desc">Datos guardados en Firestore. Se muestra un registro por guardado.</div>
+      </div>
+      <div class="hist-actions no-print">
+        <button type="button" class="btn btn-secondary" id="btnImprimirHistorial">Imprimir</button>
+        <button type="button" class="btn btn-secondary" id="btnBorrarSeleccionados">Borrar seleccionados</button>
+      </div>
+    </div>
+
+    <div class="hist-table-wrapper">
+      <table>
+        <thead>
+          <tr>
+            <th>Fecha</th>
+            <th>Córdoba</th>
+            <th>Quiroga</th>
+            <th>Impacto %</th>
+            <th>Sel.</th>
+          </tr>
+        </thead>
+        <tbody id="tbodyHistorial"></tbody>
+      </table>
+    </div>
+  </section>
+</section>
