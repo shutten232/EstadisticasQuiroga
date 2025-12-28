@@ -1,4 +1,4 @@
-import { getDb } from './firebase.js';
+import { getDb, ensureAuth } from './firebase.js';
 import { getHoyISO, formatFechaISO, calcularImpacto } from './utils.js';
 
 const COLLECTION_NAME = 'impacto_diario';
@@ -95,6 +95,7 @@ function renderTodo(){
 }
 
 async function cargarRegistros(){
+  await ensureAuth();
   const db = getDb();
   const snapshot = await db.collection(COLLECTION_NAME).orderBy('fecha','desc').get();
   registros = [];
@@ -129,6 +130,7 @@ function bindEvents(){
     const fecha = inpFecha?.value || getHoyISO();
 
     try{
+    await ensureAuth();
       const db = getDb();
       await db.collection(COLLECTION_NAME).add({
         fecha, cordoba, quiroga,
@@ -156,6 +158,7 @@ function bindEvents(){
       const ids = Array.from(checks).map(chk => chk.dataset.id);
 
       try{
+    await ensureAuth();
         const db = getDb();
         const batch = db.batch();
         ids.forEach(id => batch.delete(db.collection(COLLECTION_NAME).doc(id)));

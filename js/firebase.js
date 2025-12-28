@@ -10,13 +10,51 @@ export const firebaseConfig = {
 };
 
 let _db = null;
+let _authPromise = null;
 
-export function getDb(){
-  if(_db) return _db;
+function ensureFirebaseApp(){
   if(!window.firebase) throw new Error('Firebase SDK no cargado');
   if(!firebase.apps || firebase.apps.length === 0){
     firebase.initializeApp(firebaseConfig);
   }
+}
+
+/**
+ * Garantiza que exista un usuario autenticado (anon) antes de usar Firestore.
+ * Requiere que index.html cargue firebase-auth.js.
+ */
+export function ensureAuth(){
+  if(_authPromise) return _authPromise;
+
+  _authPromise = (async () => {
+    ensureFirebaseApp();
+    if(!firebase.auth) throw new Error('Firebase Auth no disponible (falta firebase-auth.js)');
+
+    // Si ya hay usuario, listo
+    const current = firebase.auth().currentUser;
+    if(current) return current;
+
+    // Espera el primer estado y si no hay user, hace sign-in anónimo
+    return await new Promise((resolve, reject) => {
+      const unsub = firebase.auth().onAuthStateChanged(async (u) => {
+        try{
+          unsub();
+          if(u) return resolve(u);
+          const cred = await firebase.auth().signInAnonymously();
+          resolve(cred.user);
+        }catch(err){
+          reject(err);
+        }
+      }, reject);
+    });
+  })();
+
+  return _authPromise;
+}
+
+export function getDb(){
+  if(_db) return _db;
+  ensureFirebaseApp();
   _db = firebase.firestore();
   return _db;
 }
