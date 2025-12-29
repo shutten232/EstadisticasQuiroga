@@ -5,6 +5,8 @@ const COLLECTION_NAME = 'impacto_diario';
 let registros = [];
 let bound = false;
 let currentMonthKey = null;
+let cordobaMesCache = new Map();
+let saveCordobaMesTimer = null;
 
 function qs(id){ return document.getElementById(id); }
 function obtenerUltimoRegistro(){ return registros.length ? registros[0] : null; }
@@ -16,7 +18,8 @@ function renderResumen(){
   const kpiQuiroga = qs('kpiQuiroga');
   const kpiImpacto = qs('kpiImpacto');
   const kpiCordobaMes = qs('kpiCordobaMes');
-  const kpiSumaImpactoMes = qs('kpiSumaImpactoMes');
+  const kpiPromImpactoMes = qs('kpiPromImpactoMes');
+  const kpiQuirogaMes = qs('kpiQuirogaMes');
   const inpCordobaMesManual = qs('inpCordobaMesManual');
   const inpFecha = qs('inpFecha');
 
@@ -40,29 +43,55 @@ function renderResumen(){
   if(lblFechaForm) lblFechaForm.textContent = 'Seleccioná la fecha de los datos (por defecto hoy).';
   if(inpFecha && !inpFecha.value) inpFecha.value = hoyISO;
 
-  // KPI: total Córdoba del mes (manual) + promedio de impacto del mes
+  // KPI: total Córdoba del mes (manual en Firestore) + promedio impacto del mes
   if(currentMonthKey){
-    const key = 'cordoba_mes_total_' + currentMonthKey;
-    const stored = localStorage.getItem(key);
-    const manualVal = stored ? (parseInt(stored, 10) || 0) : 0;
-    if(kpiCordobaMes) kpiCordobaMes.textContent = manualVal;
-    if(inpCordobaMesManual && inpCordobaMesManual.value === '') inpCordobaMesManual.value = manualVal ? String(manualVal) : '';
-
+    // Promedio del impacto del mes (lo que mira tu jefe) + total PH Quiroga del mes
     let suma = 0;
-    let n = 0;
+    let count = 0;
+    let sumQuirogaMes = 0;
     for(const r of registros){
       if(!r || typeof r.fecha !== 'string') continue;
       if(r.fecha.slice(0,7) !== currentMonthKey) continue;
+      sumQuirogaMes += (parseInt(r.quiroga,10) || 0);
       const imp = calcularImpacto(r.cordoba || 0, r.quiroga || 0);
       if(imp === null) continue;
       suma += imp;
-      n++;
+      count++;
     }
-    const promedio = n ? (suma / n) : 0;
-    if(kpiSumaImpactoMes) kpiSumaImpactoMes.textContent = promedio.toFixed(1).replace('.',',') + '%';
+    if(kpiPromImpactoMes){
+      if(count === 0) kpiPromImpactoMes.textContent = '–';
+      else kpiPromImpactoMes.textContent = (suma / count).toFixed(1).replace('.',',') + '%';
+    }
+
+    if(kpiQuirogaMes) kpiQuirogaMes.textContent = String(sumQuirogaMes || 0);
+
+    // Total Córdoba del mes (manual) guardado en Firestore
+    if(cordobaMesCache.has(currentMonthKey)){
+      const manualVal = cordobaMesCache.get(currentMonthKey) || 0;
+      if(kpiCordobaMes) kpiCordobaMes.textContent = manualVal;
+      if(inpCordobaMesManual && inpCordobaMesManual.value === '') inpCordobaMesManual.value = manualVal ? String(manualVal) : '';
+    }else{
+      if(kpiCordobaMes) kpiCordobaMes.textContent = '0';
+      (async () => {
+        try{
+          await ensureAuth();
+          const db = getDb();
+          const snap = await db.collection('kpis_cordoba_mes').doc(currentMonthKey).get();
+          const data = snap.exists ? snap.data() : null;
+          const manualVal = data && typeof data.ph_total_cordoba !== 'undefined' ? (parseInt(data.ph_total_cordoba, 10) || 0) : 0;
+          cordobaMesCache.set(currentMonthKey, manualVal);
+          if(kpiCordobaMes) kpiCordobaMes.textContent = manualVal;
+          if(inpCordobaMesManual && inpCordobaMesManual.value === '') inpCordobaMesManual.value = manualVal ? String(manualVal) : '';
+        }catch(err){
+          console.error('Error leyendo kpis_cordoba_mes:', err);
+        }
+      })();
+    }
   }else{
+    // Sin registros: dejar KPIs del mes en cero/guión
     if(kpiCordobaMes) kpiCordobaMes.textContent = '0';
-    if(kpiSumaImpactoMes) kpiSumaImpactoMes.textContent = '0%';
+    if(kpiPromImpactoMes) kpiPromImpactoMes.textContent = '–';
+    if(kpiQuirogaMes) kpiQuirogaMes.textContent = '0';
   }
 
   if(kpiCordoba) kpiCordoba.textContent = cordoba;
@@ -154,9 +183,29 @@ function bindEvents(){
     if(!el || el.id !== 'inpCordobaMesManual') return;
     if(!currentMonthKey) return;
     const v = parseInt(el.value, 10) || 0;
-    localStorage.setItem('cordoba_mes_total_' + currentMonthKey, String(v));
+
+    // UI inmediata + cache
+    cordobaMesCache.set(currentMonthKey, v);
     const kpi = qs('kpiCordobaMes');
     if(kpi) kpi.textContent = v;
+
+    // Guardado en Firestore (debounce)
+    if(saveCordobaMesTimer) clearTimeout(saveCordobaMesTimer);
+    saveCordobaMesTimer = setTimeout(async () => {
+      try{
+        await ensureAuth();
+        const db = getDb();
+        const payload = { ph_total_cordoba: v };
+        try{
+          if(window.firebase && firebase.firestore && firebase.firestore.FieldValue){
+            payload.updatedAt = firebase.firestore.FieldValue.serverTimestamp();
+          }
+        }catch(_){ /* ignore */ }
+        await db.collection('kpis_cordoba_mes').doc(currentMonthKey).set(payload, { merge: true });
+      }catch(err){
+        console.error('Error guardando kpis_cordoba_mes:', err);
+      }
+    }, 400);
   });
 
   document.addEventListener('submit', async (e) => {
