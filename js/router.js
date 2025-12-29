@@ -2,19 +2,22 @@ import { initImpactoDiario } from './impacto-diario.js';
 import { initChartsMensuales } from './charts-mensuales.js';
 import { initChartsImpacto } from './charts-impacto.js';
 
+const SECTIONS_BASE = new URL('../sections/', import.meta.url);
+
 const ROUTES = {
-  'presentacion': './sections/presentacion.html',
-  'resumen-mensual': './sections/resumen-mensual.html',
-  'hoy': './sections/hoy.html',
-  'resumen': './sections/resumen.html',
-  'cantidades': './sections/cantidades.html',
-  'impacto': './sections/impacto.html',
-  'talleres': './sections/talleres.html'
+  'presentacion': 'presentacion.html',
+  'resumen-mensual': 'resumen-mensual.html',
+  'hoy': 'hoy.html',
+  'resumen': 'resumen.html',
+  'cantidades': 'cantidades.html',
+  'impacto': 'impacto.html',
+  'talleres': 'talleres.html'
 };
 
 export async function loadRoute(route){
   const app = document.getElementById('app');
-  const path = ROUTES[route] || ROUTES.presentacion;
+  const rel = ROUTES[route] || ROUTES.presentacion;
+  const path = new URL(rel, SECTIONS_BASE).toString();
 
   try{
     const res = await fetch(path, { cache: 'no-store' });

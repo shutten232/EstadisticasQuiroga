@@ -10,7 +10,19 @@
       <div class="card-title">Resumen de último día cargado</div>
       <div class="date-label" id="lblFecha"></div>
 
-      <div class="grid-3">
+      <div class="grid-4">
+        <div class="kpi kpi-primary">
+          <div class="kpi-label">PH totales Córdoba (mes)</div>
+          <div class="kpi-value" id="kpiCordobaMes">0</div>
+          <div class="kpi-extra">
+            <label class="kpi-inline">
+              <span>Total Córdoba (manual):</span>
+              <input id="inpCordobaMesManual" type="number" inputmode="numeric" min="0" step="1" placeholder="0" class="kpi-input" />
+            </label>
+            <div class="kpi-sub">Promedio impacto del mes: <strong id="kpiSumaImpactoMes">0%</strong></div>
+          </div>
+        </div>
+
         <div class="kpi">
           <div class="kpi-label">Córdoba</div>
           <div class="kpi-value" id="kpiCordoba">0</div>

@@ -4,6 +4,7 @@ import { getHoyISO, formatFechaISO, calcularImpacto } from './utils.js';
 const COLLECTION_NAME = 'impacto_diario';
 let registros = [];
 let bound = false;
+let currentMonthKey = null;
 
 function qs(id){ return document.getElementById(id); }
 function obtenerUltimoRegistro(){ return registros.length ? registros[0] : null; }
@@ -14,12 +15,19 @@ function renderResumen(){
   const kpiCordoba = qs('kpiCordoba');
   const kpiQuiroga = qs('kpiQuiroga');
   const kpiImpacto = qs('kpiImpacto');
+  const kpiCordobaMes = qs('kpiCordobaMes');
+  const kpiSumaImpactoMes = qs('kpiSumaImpactoMes');
+  const inpCordobaMesManual = qs('inpCordobaMesManual');
   const inpFecha = qs('inpFecha');
 
   const hoyISO = getHoyISO();
   const ultimo = obtenerUltimoRegistro();
 
   let cordoba = 0, quiroga = 0;
+  currentMonthKey = null;
+  if(ultimo && typeof ultimo.fecha === 'string' && ultimo.fecha.length >= 7){
+    currentMonthKey = ultimo.fecha.slice(0,7);
+  }
 
   if(ultimo){
     cordoba = ultimo.cordoba || 0;
@@ -31,6 +39,31 @@ function renderResumen(){
 
   if(lblFechaForm) lblFechaForm.textContent = 'Seleccioná la fecha de los datos (por defecto hoy).';
   if(inpFecha && !inpFecha.value) inpFecha.value = hoyISO;
+
+  // KPI: total Córdoba del mes (manual) + promedio de impacto del mes
+  if(currentMonthKey){
+    const key = 'cordoba_mes_total_' + currentMonthKey;
+    const stored = localStorage.getItem(key);
+    const manualVal = stored ? (parseInt(stored, 10) || 0) : 0;
+    if(kpiCordobaMes) kpiCordobaMes.textContent = manualVal;
+    if(inpCordobaMesManual && inpCordobaMesManual.value === '') inpCordobaMesManual.value = manualVal ? String(manualVal) : '';
+
+    let suma = 0;
+    let n = 0;
+    for(const r of registros){
+      if(!r || typeof r.fecha !== 'string') continue;
+      if(r.fecha.slice(0,7) !== currentMonthKey) continue;
+      const imp = calcularImpacto(r.cordoba || 0, r.quiroga || 0);
+      if(imp === null) continue;
+      suma += imp;
+      n++;
+    }
+    const promedio = n ? (suma / n) : 0;
+    if(kpiSumaImpactoMes) kpiSumaImpactoMes.textContent = promedio.toFixed(1).replace('.',',') + '%';
+  }else{
+    if(kpiCordobaMes) kpiCordobaMes.textContent = '0';
+    if(kpiSumaImpactoMes) kpiSumaImpactoMes.textContent = '0%';
+  }
 
   if(kpiCordoba) kpiCordoba.textContent = cordoba;
   if(kpiQuiroga) kpiQuiroga.textContent = quiroga;
@@ -115,6 +148,16 @@ async function cargarRegistros(){
 function bindEvents(){
   if(bound) return;
   bound = true;
+
+  document.addEventListener('input', (e) => {
+    const el = e.target;
+    if(!el || el.id !== 'inpCordobaMesManual') return;
+    if(!currentMonthKey) return;
+    const v = parseInt(el.value, 10) || 0;
+    localStorage.setItem('cordoba_mes_total_' + currentMonthKey, String(v));
+    const kpi = qs('kpiCordobaMes');
+    if(kpi) kpi.textContent = v;
+  });
 
   document.addEventListener('submit', async (e) => {
     const form = e.target;
