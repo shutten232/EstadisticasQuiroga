@@ -46,30 +46,30 @@ function renderResumen(){
   // KPI: total Córdoba del mes (manual en Firestore) + promedio impacto del mes
   if(currentMonthKey){
     // Promedio del impacto del mes (lo que mira tu jefe) + total PH Quiroga del mes
-    let suma = 0;
-    let count = 0;
     let sumQuirogaMes = 0;
     for(const r of registros){
       if(!r || typeof r.fecha !== 'string') continue;
       if(r.fecha.slice(0,7) !== currentMonthKey) continue;
       sumQuirogaMes += (parseInt(r.quiroga,10) || 0);
-      const imp = calcularImpacto(r.cordoba || 0, r.quiroga || 0);
-      if(imp === null) continue;
-      suma += imp;
-      count++;
     }
-    if(kpiPromImpactoMes){
-      if(count === 0) kpiPromImpactoMes.textContent = '–';
-      else kpiPromImpactoMes.textContent = (suma / count).toFixed(1).replace('.',',') + '%';
-    }
-
-    if(kpiQuirogaMes) kpiQuirogaMes.textContent = String(sumQuirogaMes || 0);
+    // Impacto del mes: se calcula cuando está disponible el total Córdoba mensual (manual).
+    if(kpiPromImpactoMes) kpiPromImpactoMes.textContent = '–';
+if(kpiQuirogaMes) kpiQuirogaMes.textContent = String(sumQuirogaMes || 0);
 
     // Total Córdoba del mes (manual) guardado en Firestore
     if(cordobaMesCache.has(currentMonthKey)){
       const manualVal = cordobaMesCache.get(currentMonthKey) || 0;
       if(kpiCordobaMes) kpiCordobaMes.textContent = manualVal;
       if(inpCordobaMesManual && inpCordobaMesManual.value === '') inpCordobaMesManual.value = manualVal ? String(manualVal) : '';
+      // Mostrar SOLO impacto total del mes (sumQuirogaMes / totalCórdobaMes manual)
+      if(kpiPromImpactoMes){
+        if(manualVal > 0){
+          const impactoMes = (sumQuirogaMes / manualVal) * 100;
+          kpiPromImpactoMes.textContent = impactoMes.toFixed(1).replace('.',',') + '%';
+        }else{
+          kpiPromImpactoMes.textContent = '–';
+        }
+      }
     }else{
       if(kpiCordobaMes) kpiCordobaMes.textContent = '0';
       (async () => {
@@ -82,6 +82,15 @@ function renderResumen(){
           cordobaMesCache.set(currentMonthKey, manualVal);
           if(kpiCordobaMes) kpiCordobaMes.textContent = manualVal;
           if(inpCordobaMesManual && inpCordobaMesManual.value === '') inpCordobaMesManual.value = manualVal ? String(manualVal) : '';
+          // Mostrar SOLO impacto total del mes (sumQuirogaMes / totalCórdobaMes manual)
+          if(kpiPromImpactoMes){
+            if(manualVal > 0){
+              const impactoMes = (sumQuirogaMes / manualVal) * 100;
+              kpiPromImpactoMes.textContent = impactoMes.toFixed(1).replace('.',',') + '%';
+            }else{
+              kpiPromImpactoMes.textContent = '–';
+            }
+          }
         }catch(err){
           console.error('Error leyendo kpis_cordoba_mes:', err);
         }
